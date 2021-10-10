@@ -3,7 +3,7 @@ import {EntitySystem} from 'typed-ecstasy'
 
 @Service()
 export class RenderSystem extends EntitySystem {
-	protected override onEnable() {
+	protected override onEnable(): void {
 		console.warn('[RenderSystem] onEnable')
 	}
 
