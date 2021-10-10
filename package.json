@@ -27,5 +27,11 @@
     "webpack": "^5.58.1",
     "webpack-cli": "^4.9.0",
     "webpack-dev-server": "^4.3.1"
+  },
+  "dependencies": {
+    "@abraham/reflection": "^0.8.0",
+    "typed-ecstasy": "^2.1.0",
+    "typed-signals": "^2.3.0",
+    "typedi": "^0.10.0"
   }
 }
