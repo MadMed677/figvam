@@ -7,11 +7,11 @@ import {VelocityComponent, PositionComponent} from '../components'
 export class MovementSystem extends EntitySystem {
 	private entities: Entity[] = []
 
-	protected override onEnable() {
+	protected override onEnable(): void {
 		this.entities = this.engine.entities.forFamily(Family.all(PositionComponent, VelocityComponent).get())
 	}
 
-	protected override onDisable() {
+	protected override onDisable(): void {
 		this.entities = []
 	}
 
