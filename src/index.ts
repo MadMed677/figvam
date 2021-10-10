@@ -1,4 +1,5 @@
 import '@abraham/reflection';
+import {init} from './init'
 
 import {engine} from './core/engine'
 
@@ -13,3 +14,6 @@ const render = () => {
 // render()
 
 
+
+
+init();
