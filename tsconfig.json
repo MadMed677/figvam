@@ -1,0 +1,17 @@
+{
+	"compilerOptions": {
+		"outDir": "./dist/",
+		"target": "ES6",
+		"module": "CommonJS",
+		"declaration": true,
+		"allowJs": false,
+		"alwaysStrict": true,
+		"sourceMap": true,
+		"noImplicitAny": true,
+		"noImplicitOverride": true,
+		"noImplicitReturns": true,
+		"noImplicitThis": true,
+		"strict": true,
+		"esModuleInterop": true
+	},
+}
