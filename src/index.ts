@@ -1,19 +1,16 @@
 import '@abraham/reflection';
-import {init} from './init'
+import {init} from './init';
 
-import {engine} from './core/engine'
+import {engine} from './core/engine';
 
 const render = () => {
-	window.requestAnimationFrame((timestamp) => {
-		engine.update(timestamp)
+    window.requestAnimationFrame(timestamp => {
+        engine.update(timestamp);
 
-		render()
-	})
-}
+        render();
+    });
+};
 
 // render()
-
-
-
 
 init();
