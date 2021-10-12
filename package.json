@@ -5,9 +5,10 @@
   "main": "src/index.ts",
   "scripts": {
     "start": "npm run build:dev",
+    "prepare": "husky install",
     "build:dev": "webpack-dev-server --env dev --mode none",
     "lint": "eslint ./src",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\""
   },
   "repository": {
     "type": "git",
@@ -18,12 +19,20 @@
   "bugs": {
     "url": "https://github.com/MadMed677/figvam/issues"
   },
+  "lint-staged": {
+    "*.{js,ts,tsx,json,html,md}": [
+      "npm run lint",
+      "npm run test"
+    ]
+  },
   "homepage": "https://github.com/MadMed677/figvam#readme",
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^4.33.0",
     "@typescript-eslint/parser": "^4.33.0",
     "eslint": "^7.32.0",
     "html-webpack-plugin": "^5.3.2",
+    "husky": "^7.0.2",
+    "lint-staged": "^11.2.3",
     "mini-css-extract-plugin": "^2.4.2",
     "ts-loader": "^9.2.6",
     "typescript": "^4.4.3",
