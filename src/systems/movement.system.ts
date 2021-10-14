@@ -18,7 +18,6 @@ export class MovementSystem extends EntitySystem {
     }
 
     update(deltaTime: number): void {
-        console.warn('[MovementSystem] update');
         for (const entity of this.entities) {
             const position = entity.require(PositionComponent);
             const velocity = entity.require(VelocityComponent);
