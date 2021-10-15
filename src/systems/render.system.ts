@@ -40,9 +40,7 @@ export class RenderSystem extends EntitySystem {
 
     public onClick = new Signal<(e: PIXI.InteractionEvent) => void>();
 
-    public update(deltaTime: number): void {
-        console.log('[RenderSystem] update', deltaTime);
-
+    public update(): void {
         for (const entity of this.entities) {
             const position = entity.require(PositionComponent);
             const graphics = entity.require(GraphicsComponent);
@@ -57,7 +55,5 @@ export class RenderSystem extends EntitySystem {
 
             this.application.stage.addChild(graphics.visual.visual);
         }
-
-        console.log('this.application.stage: ', this.application.stage);
     }
 }

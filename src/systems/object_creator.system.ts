@@ -3,7 +3,7 @@ import {Service} from 'typedi';
 import {RenderSystem} from './render.system';
 import {GraphicsComponent, PositionComponent} from '../components';
 import * as PIXI from 'pixi.js';
-import {StickerGraphics} from '../graphics/sticker.graphics';
+import {StickerGraphics} from '../graphics';
 
 @Service()
 export class ObjectCreatorSystem extends EntitySystem {
@@ -22,11 +22,7 @@ export class ObjectCreatorSystem extends EntitySystem {
         sticker.add(new GraphicsComponent(new StickerGraphics()));
 
         this.engine.entities.add(sticker);
-
-        console.log('engine: ', this.engine);
     }
 
-    update(): void {
-        console.log('[ObjectCreatorSystem]');
-    }
+    update(): void {}
 }

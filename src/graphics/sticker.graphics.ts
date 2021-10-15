@@ -16,8 +16,6 @@ export class StickerGraphics implements IGraphics<IStickerGraphicsVisualize> {
     readonly visual = new PIXI.Graphics();
 
     render(data: IStickerGraphicsVisualize): void {
-        console.warn('[StickerGraphics] visualize');
-
         this.visual.lineStyle(2, 0xdfcf8b, 1);
         this.visual.beginFill(0xf3f374);
 
