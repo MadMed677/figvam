@@ -47,7 +47,7 @@ export class RenderSystem extends EntitySystem {
             const position = entity.require(PositionComponent);
             const graphics = entity.require(GraphicsComponent);
 
-            graphics.graphics.visualize({
+            graphics.visual.render({
                 position,
                 size: {
                     width: 100,
@@ -55,7 +55,7 @@ export class RenderSystem extends EntitySystem {
                 },
             });
 
-            this.application.stage.addChild(graphics.graphics);
+            this.application.stage.addChild(graphics.visual.visual);
         }
 
         console.log('this.application.stage: ', this.application.stage);

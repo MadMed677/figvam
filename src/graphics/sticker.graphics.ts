@@ -1,4 +1,5 @@
 import * as PIXI from 'pixi.js';
+import {IGraphics} from './graphics.interface';
 
 interface IStickerGraphicsVisualize {
     position: {
@@ -11,24 +12,26 @@ interface IStickerGraphicsVisualize {
     };
 }
 
-export class StickerGraphics extends PIXI.Graphics {
-    visualize(data: IStickerGraphicsVisualize): void {
+export class StickerGraphics implements IGraphics<IStickerGraphicsVisualize> {
+    readonly visual = new PIXI.Graphics();
+
+    render(data: IStickerGraphicsVisualize): void {
         console.warn('[StickerGraphics] visualize');
 
-        this.lineStyle(2, 0xdfcf8b, 1);
-        this.beginFill(0xf3f374);
+        this.visual.lineStyle(2, 0xdfcf8b, 1);
+        this.visual.beginFill(0xf3f374);
 
-        this.x = data.position.x;
-        this.y = data.position.y;
+        this.visual.x = data.position.x;
+        this.visual.y = data.position.y;
 
-        this.drawRect(0, 0, data.size.width, data.size.height);
+        this.visual.drawRect(0, 0, data.size.width, data.size.height);
 
-        this.endFill();
+        this.visual.endFill();
 
-        this.interactive = true;
-        this.buttonMode = true;
+        this.visual.interactive = true;
+        this.visual.buttonMode = true;
 
-        this.pivot.x = data.size.width / 2;
-        this.pivot.y = data.size.height / 2;
+        this.visual.pivot.x = data.size.width / 2;
+        this.visual.pivot.y = data.size.height / 2;
     }
 }

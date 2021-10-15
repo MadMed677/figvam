@@ -1,1 +1,1 @@
-export {FpsService} from './fpsService';
+export {FpsService} from './fps.service';

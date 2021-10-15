@@ -1,27 +1,12 @@
-import * as PIXI from 'pixi.js';
 import {Component} from 'typed-ecstasy';
+import {IGraphics} from '../graphics';
 
-interface IBasicVisualize {
-    position: {
-        x: number;
-        y: number;
-    };
-    size: {
-        width: number;
-        height: number;
-    };
-}
+export class GraphicsComponent<T> extends Component {
+    public visual: IGraphics<T>;
 
-export interface IGraphics extends PIXI.DisplayObject {
-    visualize(data: IBasicVisualize): void;
-}
-
-export class GraphicsComponent extends Component {
-    public graphics: IGraphics;
-
-    constructor(graphics: IGraphics) {
+    constructor(graphics: IGraphics<T>) {
         super();
 
-        this.graphics = graphics;
+        this.visual = graphics;
     }
 }
