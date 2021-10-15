@@ -1,56 +1,45 @@
 import '@abraham/reflection';
+import {Entity} from 'typed-ecstasy';
 
-import {engine} from './core/engine';
+import {FigvamEngine} from './core/figvam.engine';
+import {FpsService} from './services';
+import {MovementSystem, ObjectCreatorSystem, RenderSystem} from './systems';
+import {PositionComponent, VelocityComponent} from './components';
 
-type CallbackFunction = (time: number, frame: number) => void;
+const engine = FigvamEngine.getBuilder()
+    .withSystem(RenderSystem)
+    .withSystem(MovementSystem)
+    .withSystem(ObjectCreatorSystem)
+    .withEntity(
+        (() => {
+            const entity = new Entity();
+            entity.add(new PositionComponent(0, 0));
+            entity.add(new VelocityComponent());
 
-class RenderService {
-    private fps: number;
-    private callback: CallbackFunction;
-    private delay: number;
-    private time: number | undefined;
-    private frame: number;
-    private tref: number | undefined;
-    private isRunning: boolean;
+            return entity;
+        })(),
+    )
+    .withEntity(
+        (() => {
+            const entity = new Entity();
+            entity.add(new PositionComponent(100, 100));
+            entity.add(new VelocityComponent());
 
-    constructor(fps: number, callback: CallbackFunction) {
-        this.fps = fps;
-        this.callback = callback;
+            return entity;
+        })(),
+    )
+    .withEntity(
+        (() => {
+            const entity = new Entity();
+            entity.add(new PositionComponent(200, 200));
 
-        this.delay = 1000 / fps;
-        this.time = undefined;
-        this.frame = -1;
-        this.tref = undefined;
-        this.isRunning = false;
+            return entity;
+        })(),
+    )
+    .build();
 
-        this.loop = this.loop.bind(this);
-    }
-
-    private loop(timestamp: number): void {
-        if (this.time === undefined) {
-            this.time = timestamp;
-        }
-
-        const seg = Math.floor((timestamp - this.time) / this.delay);
-
-        if (seg > this.frame) {
-            this.frame = seg;
-            this.callback(timestamp, this.frame);
-        }
-
-        this.tref = requestAnimationFrame(this.loop);
-    }
-
-    public start(): void {
-        if (!this.isRunning) {
-            this.isRunning = true;
-            this.tref = requestAnimationFrame(this.loop);
-        }
-    }
-}
-
-const fc = new RenderService(1, time => {
+const fpsService = new FpsService(1, time => {
     engine.update(time);
 });
 
-fc.start();
+fpsService.start();
