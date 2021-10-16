@@ -1,6 +1,13 @@
 import {Component} from 'typed-ecstasy';
 
 export class VelocityComponent extends Component {
-    public x = 0;
-    public y = 0;
+    public dx = 0;
+    public dy = 0;
+
+    constructor(dx: number, dy: number) {
+        super();
+
+        this.dx = dx;
+        this.dy = dy;
+    }
 }
