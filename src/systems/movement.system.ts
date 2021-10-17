@@ -17,14 +17,12 @@ export class MovementSystem extends EntitySystem {
         this.entities = [];
     }
 
-    update(deltaTime: number): void {
-        console.warn('[MovementSystem] update');
+    update(): void {
         for (const entity of this.entities) {
             const position = entity.require(PositionComponent);
             const velocity = entity.require(VelocityComponent);
 
-            position.x += velocity.x * deltaTime;
-            position.y += velocity.y * deltaTime;
+            position.x += velocity.dx;
         }
     }
 }

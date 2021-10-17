@@ -1,16 +1,17 @@
 import '@abraham/reflection';
-import {init} from './init';
 
-import {engine} from './core/engine';
+import {FigvamEngine} from './core/figvam.engine';
+import {FpsService} from './services';
+import {MovementSystem, ObjectCreatorSystem, RenderSystem} from './systems';
 
-const render = () => {
-    window.requestAnimationFrame(timestamp => {
-        engine.update(timestamp);
+const engine = FigvamEngine.getBuilder()
+    .withSystem(RenderSystem)
+    .withSystem(MovementSystem)
+    .withSystem(ObjectCreatorSystem)
+    .build();
 
-        render();
-    });
-};
+const fpsService = new FpsService(1, time => {
+    engine.update(time);
+});
 
-// render()
-
-init();
+fpsService.start();
