@@ -1,4 +1,4 @@
 module.exports = {
-	prod_path: '..dist',
-	src_path: 'src',
-}
+    prod_path: '../dist',
+    src_path: 'src',
+};

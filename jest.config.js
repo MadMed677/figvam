@@ -35,4 +35,5 @@ module.exports = {
         /** Support TypeScript experimental decorators */
         '@abraham/reflection',
     ],
+    testMatch: ['<rootDir>/src/**/*.test.{js,jsx,ts,tsx}'],
 };

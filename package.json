@@ -6,6 +6,7 @@
     "scripts": {
         "start": "npm run build:dev",
         "prepare": "husky install",
+        "build:prod": "webpack --env prod --mode production",
         "build:dev": "webpack-dev-server --env dev --mode none",
         "lint": "eslint ./src",
         "test": "jest"
@@ -20,7 +21,7 @@
         "url": "https://github.com/MadMed677/figvam/issues"
     },
     "lint-staged": {
-        "*.{js,ts,tsx,json,html,md}": [
+        "src/**/*.{js,ts,tsx,json,html,md}": [
             "npm run lint",
             "npm run test"
         ],
@@ -33,10 +34,11 @@
         "@types/jest": "^27.0.2",
         "@typescript-eslint/eslint-plugin": "^4.33.0",
         "@typescript-eslint/parser": "^4.33.0",
+        "clean-webpack-plugin": "^4.0.0",
         "eslint": "^7.32.0",
         "eslint-config-prettier": "^8.3.0",
         "eslint-plugin-prettier": "^4.0.0",
-        "html-webpack-plugin": "^5.3.2",
+        "html-webpack-plugin": "^5.4.0",
         "husky": "^7.0.2",
         "jest": "^27.3.1",
         "jest-canvas-mock": "^2.3.1",
