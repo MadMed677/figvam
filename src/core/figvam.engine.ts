@@ -8,7 +8,7 @@ interface IEngineBuilder {
     withSystem<T extends EntitySystem>(
         system: SystemConstructor<T>,
     ): IEngineBuilder;
-    withEntity(entity: Entity): IEngineBuilder;
+    withEntity(entityBuilder: (entity: Entity) => void): IEngineBuilder;
     build(): Engine;
 }
 
@@ -21,16 +21,31 @@ export class FigvamEngine {
         return class BuilderConstructor implements IEngineBuilder {
             private engine = new Engine();
 
+            /**
+             * The priority to execute this system with
+             * The lower the priority level, the sooner the system will be updated
+             *
+             * @link https://lusito.github.io/typed-ecstasy/guide/core/entitysystem.html#updating-all-systems
+             *
+             * @private
+             */
+            private systemOrder = 1;
+
             public withSystem<T extends EntitySystem>(
                 system: SystemConstructor<T>,
             ): IEngineBuilder {
-                this.engine.systems.add(system);
+                this.engine.systems.add(system, this.systemOrder++);
 
                 return this;
             }
 
-            public withEntity(entity: Entity): IEngineBuilder {
+            public withEntity(
+                entityBuilder: (entity: Entity) => void,
+            ): IEngineBuilder {
+                const entity = new Entity();
                 this.engine.entities.add(entity);
+
+                entityBuilder(entity);
 
                 return this;
             }

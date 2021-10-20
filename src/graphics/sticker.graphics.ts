@@ -1,7 +1,7 @@
 import * as PIXI from 'pixi.js';
 import {IGraphics} from './graphics.interface';
 
-interface IStickerGraphicsVisualize {
+interface IStickerGraphicsProps {
     position: {
         x: number;
         y: number;
@@ -10,14 +10,53 @@ interface IStickerGraphicsVisualize {
         width: number;
         height: number;
     };
+    mode: 'normal' | 'selected';
 }
 
-export class StickerGraphics implements IGraphics<IStickerGraphicsVisualize> {
+interface IStickerGraphicsStyle {
+    background: number;
+    line: number;
+}
+
+export class StickerGraphics implements IGraphics<IStickerGraphicsProps> {
+    private readonly id: number;
+
+    constructor(id: number) {
+        this.id = id;
+    }
+
     readonly visual = new PIXI.Graphics();
 
-    render(data: IStickerGraphicsVisualize): void {
-        this.visual.lineStyle(2, 0xdfcf8b, 1);
-        this.visual.beginFill(0xf3f374);
+    private getStyle(
+        mode: IStickerGraphicsProps['mode'],
+    ): IStickerGraphicsStyle {
+        switch (mode) {
+            case 'normal': {
+                return {
+                    background: PIXI.utils.string2hex('#FCF3CF'),
+                    line: PIXI.utils.string2hex('#F9E79F'),
+                };
+            }
+            case 'selected': {
+                return {
+                    background: PIXI.utils.string2hex('#D5F5E3'),
+                    line: PIXI.utils.string2hex('#ABEBC6'),
+                };
+            }
+            default: {
+                return {
+                    background: PIXI.utils.string2hex('#FCF3CF'),
+                    line: PIXI.utils.string2hex('#F9E79F'),
+                };
+            }
+        }
+    }
+
+    render(data: IStickerGraphicsProps): void {
+        const color = this.getStyle(data.mode);
+
+        this.visual.lineStyle(2, color.line, 1);
+        this.visual.beginFill(color.background);
 
         this.visual.x = data.position.x;
         this.visual.y = data.position.y;
@@ -28,6 +67,8 @@ export class StickerGraphics implements IGraphics<IStickerGraphicsVisualize> {
 
         this.visual.interactive = true;
         this.visual.buttonMode = true;
+
+        this.visual.name = String(this.id);
 
         this.visual.pivot.x = data.size.width / 2;
         this.visual.pivot.y = data.size.height / 2;

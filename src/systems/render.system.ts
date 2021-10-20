@@ -1,36 +1,28 @@
-import {Service} from 'typedi';
-import {Signal} from 'typed-signals';
+import {Inject, Service} from 'typedi';
 import {Entity, EntitySystem, Family} from 'typed-ecstasy';
-import * as PIXI from 'pixi.js';
-import {GraphicsComponent, PositionComponent} from '../components';
+
+import {
+    GraphicsComponent,
+    PositionComponent,
+    SelectedComponent,
+    SizeComponent,
+} from '../components';
+import {PixiService} from '../services';
 
 @Service()
 export class RenderSystem extends EntitySystem {
     private entities: Entity[] = [];
-    private application: PIXI.Application = new PIXI.Application({
-        width: window.innerWidth,
-        height: window.innerHeight,
-    });
+
+    @Inject()
+    private readonly pixiService!: PixiService;
 
     protected override onEnable(): void {
-        const background = new PIXI.Graphics();
-        background.hitArea = new PIXI.Rectangle(0, 0, 10000, 10000);
-        background.clear();
-        background.beginFill(0x7d99e3, 1);
-        background.drawRect(0, 0, window.innerWidth, window.innerHeight);
-        background.endFill();
-        background.interactive = true;
-
-        this.application.stage.addChild(background);
-
-        background.on('click', (e: PIXI.InteractionEvent) => {
-            this.onClick.emit(e);
-        });
-
-        document.body.appendChild(this.application.view);
-
         this.entities = this.engine.entities.forFamily(
-            Family.all(PositionComponent, GraphicsComponent).get(),
+            Family.all(
+                PositionComponent,
+                GraphicsComponent,
+                SizeComponent,
+            ).get(),
         );
     }
 
@@ -38,22 +30,22 @@ export class RenderSystem extends EntitySystem {
         this.entities = [];
     }
 
-    public onClick = new Signal<(e: PIXI.InteractionEvent) => void>();
-
     public update(): void {
         for (const entity of this.entities) {
             const position = entity.require(PositionComponent);
+            const size = entity.require(SizeComponent);
             const graphics = entity.require(GraphicsComponent);
+            const selected = entity.get(SelectedComponent);
 
             graphics.visual.render({
                 position,
-                size: {
-                    width: 100,
-                    height: 100,
-                },
+                size,
+                mode: selected ? 'selected' : 'normal',
             });
 
-            this.application.stage.addChild(graphics.visual.visual);
+            this.pixiService
+                .getApplication()
+                .stage.addChild(graphics.visual.visual);
         }
     }
 }

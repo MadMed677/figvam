@@ -1,7 +1,7 @@
 import {Service} from 'typedi';
 import {Entity, EntitySystem, Family} from 'typed-ecstasy';
 
-import {VelocityComponent, PositionComponent} from '../components';
+import {DragComponent, PositionComponent} from '../components';
 
 @Service()
 export class MovementSystem extends EntitySystem {
@@ -9,7 +9,7 @@ export class MovementSystem extends EntitySystem {
 
     protected override onEnable(): void {
         this.entities = this.engine.entities.forFamily(
-            Family.all(PositionComponent, VelocityComponent).get(),
+            Family.all(PositionComponent, DragComponent).get(),
         );
     }
 
@@ -20,9 +20,10 @@ export class MovementSystem extends EntitySystem {
     update(): void {
         for (const entity of this.entities) {
             const position = entity.require(PositionComponent);
-            const velocity = entity.require(VelocityComponent);
+            const drag = entity.require(DragComponent);
 
-            position.x += velocity.dx;
+            position.x = drag.x;
+            position.y = drag.y;
         }
     }
 }
