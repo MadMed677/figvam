@@ -18,8 +18,12 @@ module.exports = {
     },
     devtool: 'source-map',
     devServer: {
-        open: true,
+        open: false,
         port: 9000,
+        hot: true,
+        client: {
+            progress: true,
+        },
     },
     module: {
         rules: [
@@ -27,6 +31,10 @@ module.exports = {
                 test: /\.ts?$/,
                 use: 'ts-loader',
                 exclude: /node_modules/,
+            },
+            {
+                test: /\.css$/i,
+                use: ['style-loader', 'css-loader'],
             },
         ],
     },

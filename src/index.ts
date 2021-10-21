@@ -1,4 +1,5 @@
 import '@abraham/reflection';
+import './style.css';
 
 import {FigvamEngine} from './core/figvam.engine';
 import {FpsService} from './services';

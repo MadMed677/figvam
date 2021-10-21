@@ -1,5 +1,6 @@
 import * as PIXI from 'pixi.js';
 import {IGraphics} from './graphics.interface';
+import {IFigvamTheme} from '../services';
 
 interface IStickerGraphicsProps {
     position: {
@@ -10,58 +11,63 @@ interface IStickerGraphicsProps {
         width: number;
         height: number;
     };
+    theme: IFigvamTheme;
     mode: 'normal' | 'selected';
-}
-
-interface IStickerGraphicsStyle {
-    background: number;
-    line: number;
 }
 
 export class StickerGraphics implements IGraphics<IStickerGraphicsProps> {
     private readonly id: number;
+    private props!: IStickerGraphicsProps;
+    readonly visual = new PIXI.Graphics();
 
     constructor(id: number) {
         this.id = id;
     }
 
-    readonly visual = new PIXI.Graphics();
-
-    private getStyle(
-        mode: IStickerGraphicsProps['mode'],
-    ): IStickerGraphicsStyle {
-        switch (mode) {
-            case 'normal': {
-                return {
-                    background: PIXI.utils.string2hex('#FCF3CF'),
-                    line: PIXI.utils.string2hex('#F9E79F'),
-                };
-            }
-            case 'selected': {
-                return {
-                    background: PIXI.utils.string2hex('#D5F5E3'),
-                    line: PIXI.utils.string2hex('#ABEBC6'),
-                };
-            }
-            default: {
-                return {
-                    background: PIXI.utils.string2hex('#FCF3CF'),
-                    line: PIXI.utils.string2hex('#F9E79F'),
-                };
-            }
-        }
+    public setProps(props: IStickerGraphicsProps): void {
+        this.props = props;
     }
 
-    render(data: IStickerGraphicsProps): void {
-        const color = this.getStyle(data.mode);
+    public shouldComponentUpdate(nextProps: IStickerGraphicsProps): boolean {
+        // If it's a first render
+        if (!this.props) {
+            return true;
+        }
 
-        this.visual.lineStyle(2, color.line, 1);
-        this.visual.beginFill(color.background);
+        return (
+            nextProps.position.x !== this.props.position.x ||
+            nextProps.position.y !== this.props.position.y ||
+            nextProps.size.width !== this.props.size.width ||
+            nextProps.size.height !== this.props.size.height ||
+            nextProps.mode !== this.props.mode ||
+            nextProps.theme !== this.props.theme
+        );
+    }
 
-        this.visual.x = data.position.x;
-        this.visual.y = data.position.y;
+    render(): void {
+        const color =
+            this.props.mode === 'selected'
+                ? {
+                      bgColor: this.props.theme.bgColor.accent,
+                      border: this.props.theme.border.accent,
+                  }
+                : {
+                      bgColor: this.props.theme.bgColor.primary,
+                      border: this.props.theme.border.primary,
+                  };
 
-        this.visual.drawRect(0, 0, data.size.width, data.size.height);
+        this.visual.lineStyle(2, color.border);
+        this.visual.beginFill(color.bgColor);
+
+        this.visual.x = this.props.position.x;
+        this.visual.y = this.props.position.y;
+
+        this.visual.drawRect(
+            0,
+            0,
+            this.props.size.width,
+            this.props.size.height,
+        );
 
         this.visual.endFill();
 
@@ -70,7 +76,7 @@ export class StickerGraphics implements IGraphics<IStickerGraphicsProps> {
 
         this.visual.name = String(this.id);
 
-        this.visual.pivot.x = data.size.width / 2;
-        this.visual.pivot.y = data.size.height / 2;
+        this.visual.pivot.x = this.props.size.width / 2;
+        this.visual.pivot.y = this.props.size.height / 2;
     }
 }
