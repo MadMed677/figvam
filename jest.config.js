@@ -18,6 +18,22 @@ module.exports = {
     collectCoverage: false,
 
     /**
+     * An array of glob patterns indicating a set of files
+     *  for which coverage information should be collected
+     */
+    collectCoverageFrom: ['src/**/*'],
+
+    /** This will be used to configure minimum threshold enforcement for coverage results */
+    coverageThreshold: {
+        global: {
+            branches: 5,
+            functions: 5,
+            lines: 5,
+            statements: 5,
+        },
+    },
+
+    /**
      * A list of paths to modules that run some code to configure
      *  or set up the testing environment.
      * Each setupFile will be run once per test file.
