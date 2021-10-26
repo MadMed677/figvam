@@ -84,9 +84,26 @@ export class FpsService {
     }
 
     public start(): void {
-        if (!this.isRunning) {
-            this.isRunning = true;
-            this.rafUID = requestAnimationFrame(this.loop);
+        if (this.isRunning) {
+            throw new Error(
+                'FpsService already started. Please call "stop" method before calling "start"',
+            );
         }
+
+        this.isRunning = true;
+        this.rafUID = requestAnimationFrame(this.loop);
+    }
+
+    public stop(): void {
+        if (!this.isRunning || this.rafUID === undefined) {
+            throw new Error(
+                'FpsService has not started. Please call "start" method before calling "stop"',
+            );
+        }
+
+        cancelAnimationFrame(this.rafUID);
+        this.isRunning = false;
+        this.time = undefined;
+        this.frame = -1;
     }
 }

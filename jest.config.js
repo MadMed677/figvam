@@ -50,6 +50,7 @@ module.exports = {
 
         /** Support TypeScript experimental decorators */
         '@abraham/reflection',
+        './src/jest.setup.ts',
     ],
     testMatch: ['<rootDir>/src/**/*.test.{js,jsx,ts,tsx}'],
 };

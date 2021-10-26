@@ -1,5 +1,5 @@
 import {Inject, Service} from 'typedi';
-import {Entity, EntitySystem, Family} from 'typed-ecstasy';
+import {Entity, Family, IteratingSystem} from 'typed-ecstasy';
 
 import {
     GraphicsComponent,
@@ -7,17 +7,12 @@ import {
     SelectedComponent,
     SizeComponent,
 } from '../components';
-import {PixiService} from '../services';
+import {PixiService, ThemeService} from '../services';
 
 @Service()
-export class RenderSystem extends EntitySystem {
-    private entities: Entity[] = [];
-
-    @Inject()
-    private readonly pixiService!: PixiService;
-
-    protected override onEnable(): void {
-        this.entities = this.engine.entities.forFamily(
+export class RenderSystem extends IteratingSystem {
+    constructor() {
+        super(
             Family.all(
                 PositionComponent,
                 GraphicsComponent,
@@ -26,26 +21,38 @@ export class RenderSystem extends EntitySystem {
         );
     }
 
-    protected override onDisable(): void {
-        this.entities = [];
-    }
+    @Inject()
+    private readonly pixiService!: PixiService;
 
-    public update(): void {
-        for (const entity of this.entities) {
-            const position = entity.require(PositionComponent);
-            const size = entity.require(SizeComponent);
-            const graphics = entity.require(GraphicsComponent);
-            const selected = entity.get(SelectedComponent);
+    @Inject()
+    private readonly themeService!: ThemeService;
 
-            graphics.visual.render({
-                position,
-                size,
-                mode: selected ? 'selected' : 'normal',
-            });
+    protected override processEntity(entity: Entity): void {
+        const position = entity.require(PositionComponent);
+        const size = entity.require(SizeComponent);
+        const graphics = entity.require(GraphicsComponent);
+        const selected = entity.get(SelectedComponent);
 
-            this.pixiService
-                .getApplication()
-                .stage.addChild(graphics.visual.visual);
+        const nextProps = {
+            position: {
+                x: position.x,
+                y: position.y,
+            },
+            size: {
+                width: size.width,
+                height: size.height,
+            },
+            theme: this.themeService.getTheme(),
+            mode: selected ? 'selected' : 'normal',
+        };
+
+        if (graphics.visual.shouldComponentUpdate(nextProps)) {
+            graphics.visual.setProps(nextProps);
+            graphics.visual.render();
         }
+
+        this.pixiService
+            .getApplication()
+            .stage.addChild(graphics.visual.visual);
     }
 }
