@@ -4,7 +4,6 @@ import {RenderSystem} from './';
 import {
     GraphicsComponent,
     PositionComponent,
-    SelectedComponent,
     SizeComponent,
 } from '../components';
 import {IGraphics} from '../graphics';
