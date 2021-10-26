@@ -2,7 +2,7 @@ import * as PIXI from 'pixi.js';
 import {IGraphics} from './graphics.interface';
 import {IFigvamTheme} from '../services';
 
-interface IStickerGraphicsProps {
+export interface IStickerGraphicsProps {
     position: {
         x: number;
         y: number;
@@ -13,15 +13,26 @@ interface IStickerGraphicsProps {
     };
     theme: IFigvamTheme;
     mode: 'normal' | 'selected';
+    text?: string;
 }
 
 export class StickerGraphics implements IGraphics<IStickerGraphicsProps> {
     private readonly id: number;
     private props!: IStickerGraphicsProps;
+
+    /** Pixi Primitives */
     readonly visual = new PIXI.Graphics();
+    private readonly text = new PIXI.Text('', {
+        fontSize: 16,
+        wordWrap: true,
+        wordWrapWidth: 100,
+        align: 'center',
+    });
 
     constructor(id: number) {
         this.id = id;
+
+        this.visual.addChild(this.text);
     }
 
     public setProps(props: IStickerGraphicsProps): void {
@@ -40,6 +51,7 @@ export class StickerGraphics implements IGraphics<IStickerGraphicsProps> {
             nextProps.size.width !== this.props.size.width ||
             nextProps.size.height !== this.props.size.height ||
             nextProps.mode !== this.props.mode ||
+            nextProps.text !== this.props.text ||
             nextProps.theme !== this.props.theme
         );
     }
@@ -78,5 +90,7 @@ export class StickerGraphics implements IGraphics<IStickerGraphicsProps> {
 
         this.visual.pivot.x = this.props.size.width / 2;
         this.visual.pivot.y = this.props.size.height / 2;
+
+        this.text.text = this.props.text || '';
     }
 }

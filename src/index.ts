@@ -41,7 +41,7 @@ const engine = FigvamEngine.getBuilder()
     })
     .build();
 
-const fpsService = new FpsService(20, time => {
+const fpsService = new FpsService(40, time => {
     engine.update(time);
 });
 
