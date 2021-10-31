@@ -21,5 +21,5 @@ module.exports = {
             },
         },
     ],
-    ignorePatterns: ['webpack/**/*.js'],
+    ignorePatterns: ['packages/**/webpack/**/*.js'],
 };

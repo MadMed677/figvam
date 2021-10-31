@@ -1,0 +1,23 @@
+{
+  "name": "@figvam/whiteboard",
+  "version": "0.1.0",
+  "description": "",
+  "main": "src/index.ts",
+  "scripts": {
+    "start": "npm run build:dev",
+    "build:prod": "webpack --env prod --mode production",
+    "build:dev": "webpack-dev-server --env dev --mode none",
+    "lint": "eslint src",
+    "test": "jest --config jest.config.js",
+    "storybook": "start-storybook -p 6006 --quiet",
+    "build-storybook": "build-storybook"
+  },
+  "lint-staged": {
+    "src/**/*.{js,ts,tsx,json,html,md}": [
+      "npm run lint",
+      "prettier --write --ignore-unknown"
+    ]
+  },
+  "author": "",
+  "license": "ISC"
+}

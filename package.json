@@ -2,16 +2,15 @@
   "name": "figvam",
   "version": "0.1.0",
   "description": "",
-  "main": "src/index.ts",
   "scripts": {
-    "start": "npm run build:dev",
+    "start": "lerna run start",
     "prepare": "husky install",
-    "build:prod": "webpack --env prod --mode production",
-    "build:dev": "webpack-dev-server --env dev --mode none",
-    "lint": "eslint ./src",
-    "test": "jest --config jest.config.js",
-    "storybook": "start-storybook -p 6006 --quiet",
-    "build-storybook": "build-storybook"
+    "build:prod": "lerna run build:prod",
+    "build:dev": "lerna run build:dev",
+    "lint": "lerna run lint",
+    "test": "lerna run test",
+    "storybook": "lerna run storybook",
+    "build-storybook": "lerna run build-storybook"
   },
   "repository": {
     "type": "git",
@@ -21,12 +20,6 @@
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/MadMed677/figvam/issues"
-  },
-  "lint-staged": {
-    "src/**/*.{js,ts,tsx,json,html,md}": [
-      "npm run lint",
-      "prettier --write --ignore-unknown"
-    ]
   },
   "homepage": "https://github.com/MadMed677/figvam#readme",
   "devDependencies": {
@@ -52,6 +45,7 @@
     "jest": "^27.3.1",
     "jest-canvas-mock": "^2.3.1",
     "jest-webgl-canvas-mock": "^0.2.3",
+    "lerna": "^4.0.0",
     "lint-staged": "^11.2.3",
     "mini-css-extract-plugin": "^2.4.2",
     "prettier": "2.4.1",
