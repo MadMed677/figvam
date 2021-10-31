@@ -36,35 +36,9 @@ export class ThemeService {
     private recognizeTheme(event: IMediaQueryEvent) {
         const theme: IFigvamTheme = (() => {
             if (event.matches) {
-                const darkTheme = {
-                    bgColor: {
-                        default: PIXI.utils.string2hex('#212F3D'),
-                        primary: PIXI.utils.string2hex('#F1C40F'),
-                        accent: PIXI.utils.string2hex('#58D68D'),
-                    },
-                    border: {
-                        default: PIXI.utils.string2hex('#FFFFFF'),
-                        primary: PIXI.utils.string2hex('#D4AC0D'),
-                        accent: PIXI.utils.string2hex('#2ECC71'),
-                    },
-                };
-
-                return darkTheme;
+                return this.getDarkTheme();
             } else {
-                const lightTheme = {
-                    bgColor: {
-                        default: PIXI.utils.string2hex('#FFFFFF'),
-                        primary: PIXI.utils.string2hex('#FCF3CF'),
-                        accent: PIXI.utils.string2hex('#D5F5E3'),
-                    },
-                    border: {
-                        default: PIXI.utils.string2hex('#2E4053'),
-                        primary: PIXI.utils.string2hex('#F9E79F'),
-                        accent: PIXI.utils.string2hex('#ABEBC6'),
-                    },
-                };
-
-                return lightTheme;
+                return this.getLightTheme();
             }
         })();
 
@@ -73,5 +47,35 @@ export class ThemeService {
 
     public getTheme(): IFigvamTheme {
         return this.theme;
+    }
+
+    public getLightTheme(): IFigvamTheme {
+        return {
+            bgColor: {
+                default: PIXI.utils.string2hex('#FFFFFF'),
+                primary: PIXI.utils.string2hex('#FCF3CF'),
+                accent: PIXI.utils.string2hex('#D5F5E3'),
+            },
+            border: {
+                default: PIXI.utils.string2hex('#2E4053'),
+                primary: PIXI.utils.string2hex('#F9E79F'),
+                accent: PIXI.utils.string2hex('#ABEBC6'),
+            },
+        };
+    }
+
+    public getDarkTheme(): IFigvamTheme {
+        return {
+            bgColor: {
+                default: PIXI.utils.string2hex('#212F3D'),
+                primary: PIXI.utils.string2hex('#F1C40F'),
+                accent: PIXI.utils.string2hex('#58D68D'),
+            },
+            border: {
+                default: PIXI.utils.string2hex('#FFFFFF'),
+                primary: PIXI.utils.string2hex('#D4AC0D'),
+                accent: PIXI.utils.string2hex('#2ECC71'),
+            },
+        };
     }
 }
