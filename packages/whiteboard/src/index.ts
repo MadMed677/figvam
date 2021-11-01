@@ -45,6 +45,4 @@ const fpsService = new FpsService(40, time => {
     engine.update(time);
 });
 
-window.engine = engine;
-
 fpsService.start();
