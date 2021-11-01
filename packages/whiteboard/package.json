@@ -19,5 +19,31 @@
     ]
   },
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "@babel/core": "^7.16.0",
+    "@storybook/addon-actions": "^6.3.12",
+    "@storybook/addon-essentials": "^6.3.12",
+    "@storybook/addon-links": "^6.3.12",
+    "@storybook/builder-webpack5": "^6.3.12",
+    "@storybook/html": "^6.3.12",
+    "@storybook/manager-webpack5": "^6.3.12",
+    "@types/jest": "^27.0.2",
+    "@types/pixi.js": "^5.0.0",
+    "babel-loader": "^8.2.3",
+    "clean-webpack-plugin": "^4.0.0",
+    "css-loader": "^6.5.0",
+    "html-webpack-plugin": "^5.5.0",
+    "jest": "^27.3.1",
+    "jest-canvas-mock": "^2.3.1",
+    "jest-webgl-canvas-mock": "^0.2.3",
+    "mini-css-extract-plugin": "^2.4.3",
+    "storybook-dark-mode": "^1.0.8",
+    "style-loader": "^3.3.1",
+    "ts-jest": "^27.0.7",
+    "ts-loader": "^9.2.6",
+    "webpack": "^5.61.0",
+    "webpack-cli": "^4.9.1",
+    "webpack-dev-server": "^4.4.0"
+  }
 }
