@@ -1,6 +1,4 @@
-import {Engine, Entity} from 'typed-ecstasy';
-import {SystemConstructor} from 'typed-ecstasy/dist/core/AbstractSystem';
-import {EntitySystem} from 'typed-ecstasy/dist/core/EntitySystem';
+import {Engine, Entity, EntitySystem, SystemConstructor} from 'typed-ecstasy';
 
 type PublicConstructor<T> = new () => T;
 
