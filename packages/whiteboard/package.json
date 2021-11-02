@@ -5,8 +5,7 @@
   "main": "src/index.ts",
   "scripts": {
     "start": "npm run build:dev",
-    "build:prod": "webpack --env prod --mode production",
-    "build:dev": "webpack-dev-server --env dev --mode none",
+    "build": "webpack --env prod --mode production",
     "lint": "eslint src",
     "test": "jest --config jest.config.js",
     "storybook": "start-storybook -p 6006 --quiet",

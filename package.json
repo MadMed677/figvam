@@ -5,8 +5,7 @@
   "scripts": {
     "start": "lerna run start",
     "prepare": "husky install",
-    "build:prod": "lerna run build:prod",
-    "build:dev": "lerna run build:dev",
+    "build": "lerna run build",
     "lint": "lerna run lint",
     "test": "lerna run test",
     "storybook": "lerna run storybook",
