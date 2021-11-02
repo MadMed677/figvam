@@ -7,7 +7,7 @@ cache:
         - node_modules
     npm: true
 install:
-    - lerna bootstrap
+    - npx lerna bootstrap
 jobs:
     include:
         - stage: release
