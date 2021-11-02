@@ -9,12 +9,10 @@ export class PixiService {
     });
 
     constructor() {
-        // window.__PIXI_INSPECTOR_GLOBAL_HOOK__ &&
-        //     window.__PIXI_INSPECTOR_GLOBAL_HOOK__.register({
-        //         PIXI: PIXI,
-        //     });
-
-        document.body.appendChild(this.application.view);
+        window.__PIXI_INSPECTOR_GLOBAL_HOOK__ &&
+            window.__PIXI_INSPECTOR_GLOBAL_HOOK__.register({
+                PIXI: PIXI,
+            });
     }
 
     public getApplication(): PIXI.Application {

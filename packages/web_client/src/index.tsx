@@ -1,4 +1,5 @@
 import '@abraham/reflection';
+import './types/global.d';
 
 import React from 'react';
 import ReactDOM from 'react-dom';

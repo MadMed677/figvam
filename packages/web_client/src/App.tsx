@@ -1,51 +1,58 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
 
-import '@figvam/whiteboard';
+import {Figvam, Engine} from '@figvam/whiteboard';
+import * as PIXI from 'pixi.js';
 
-// const engine = FigvamEngine.getBuilder();
-// const engine = FigvamEngine.getBuilder()
-//     .withSystem(MouseSystem)
-//     .withSystem(MovementSystem)
-//     .withSystem(ObjectCreatorSystem)
-//     .withSystem(ObjectSelectorSystem)
-//     .withSystem(RenderSystem)
-//     .withEntity(entity => {
-//         entity.add(
-//             new GraphicsComponent(new CanvasBackgroundGraphics(entity.getId())),
-//         );
-//         entity.add(new PositionComponent(0, 0));
-//         entity.add(new SizeComponent(window.innerWidth, window.innerHeight));
-//         entity.add(new SpawnableComponent());
-//     })
-//     .withEntity(entity => {
-//         entity.add(new GraphicsComponent(new StickerGraphics(entity.getId())));
-//         entity.add(new SelectableComponent());
-//         entity.add(new PositionComponent(0, 0));
-//         entity.add(new SizeComponent(100, 100));
-//     })
-//     .build();
+class App extends React.PureComponent<{}> {
+    private engine!: Engine;
+    private graphics!: PIXI.Application;
 
-function App() {
-    return (
-        <div className="App">
-            <header className="App-header">
-                <img src={logo} className="App-logo" alt="logo" />
-                <p>
-                    Edit <code>src/App.tsx</code> and save to reload.
-                </p>
-                <a
-                    className="App-link"
-                    href="https://reactjs.org"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                >
-                    Learn React
-                </a>
-            </header>
-        </div>
-    );
+    constructor(props: {}) {
+        super(props);
+
+        this.tick = this.tick.bind(this);
+    }
+
+    componentDidMount() {
+        const {engine, graphics} = new Figvam().create();
+
+        this.engine = engine;
+        this.graphics = graphics;
+
+        this.graphics.ticker.add(this.tick);
+
+        document
+            .querySelector('#canvas_container')!
+            .appendChild(this.graphics.view);
+    }
+
+    componentWillUnmount() {
+        this.graphics.ticker.remove(this.tick);
+
+        document
+            .querySelector('#canvas_container')!
+            .removeChild(this.graphics.view);
+    }
+
+    private tick() {
+        this.engine.update(
+            Math.min(0.032, this.graphics.ticker.elapsedMS / 1000),
+        );
+    }
+
+    render() {
+        return (
+            <div className="app">
+                <div id="canvas_container" />
+                <div className="app-header">
+                    <div className="app-header__menu-button">
+                        <span onClick={console.log}>FV</span>
+                    </div>
+                </div>
+            </div>
+        );
+    }
 }
 
 export default App;

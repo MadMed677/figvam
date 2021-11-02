@@ -43,6 +43,7 @@ export class MouseSystem extends EntitySystem {
 
         this.interactionManager = pixiService.getApplication().renderer.plugins
             .interaction as PIXI.InteractionManager;
+        this.interactionManager.autoPreventDefault = true;
     }
 
     protected override onEnable(): void {
