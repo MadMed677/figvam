@@ -8,6 +8,7 @@
     "build": "webpack --env prod --mode production",
     "lint": "eslint src",
     "test": "jest --config jest.config.js",
+    "ci:test": "npm run test -- --coverage",
     "storybook": "start-storybook -p 6006 --quiet",
     "build-storybook": "build-storybook"
   },

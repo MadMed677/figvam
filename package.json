@@ -8,6 +8,7 @@
     "build": "lerna run build",
     "lint": "lerna run lint",
     "test": "lerna run test",
+    "ci:test": "lerna run ci:test",
     "storybook": "lerna run storybook",
     "build-storybook": "lerna run build-storybook"
   },

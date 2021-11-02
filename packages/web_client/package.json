@@ -22,6 +22,7 @@
     "build": "craco build",
     "lint": "eslint src",
     "test": "craco test --watchAll=false",
+    "ci:test": "npm run test -- --coverage",
     "eject": "craco eject"
   },
   "lint-staged": {
