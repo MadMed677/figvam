@@ -12,7 +12,7 @@ jobs:
     include:
         - stage: release
           script:
-              - npm run build:prod
+              - npm run build
               - npm run lint
               - npm run test -- --coverage
           after_success:
