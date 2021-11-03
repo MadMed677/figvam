@@ -13,8 +13,6 @@ export class PixiService {
             window.__PIXI_INSPECTOR_GLOBAL_HOOK__.register({
                 PIXI: PIXI,
             });
-
-        document.body.appendChild(this.application.view);
     }
 
     public getApplication(): PIXI.Application {

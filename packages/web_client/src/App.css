@@ -1,0 +1,24 @@
+.app {
+}
+
+.app-header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 50px;
+  user-select: none;
+  display: flex;
+  justify-content: space-between;
+  flex-direction: row;
+  background-color: white;
+}
+
+.app-header__menu-button {
+  width: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #eee;
+  color: #000;
+}

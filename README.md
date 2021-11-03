@@ -5,7 +5,13 @@
 `FigVam` is a pet project building to figure out
 how the products like `FigJam` / `Miro` works
 
-## Tech. stack
+## Development
+To start development you should call `npm run start` script.
+It will run 2 apps:
+- Whiteboard - only the canvas which will live on `localhost:9000`
+- Web Client - full canvas and UI which will live on `localhost:3000`
 
--   PixiJS
--   ECS
+## Tech. stack
+- PixiJS
+- ECS
+- Lerna

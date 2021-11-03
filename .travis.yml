@@ -8,12 +8,13 @@ cache:
     npm: true
 install:
     - npm install
+    - npx lerna bootstrap
 jobs:
     include:
         - stage: release
           script:
-              - npm run build:prod
+              - npm run build
               - npm run lint
-              - npm run test -- --coverage
+              - npm run ci:test
           after_success:
               - bash <(curl -s https://codecov.io/bash)

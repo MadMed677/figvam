@@ -68,6 +68,8 @@ export class StickerGraphics implements IGraphics<IStickerGraphicsProps> {
                       border: this.props.theme.border.primary,
                   };
 
+        this.visual.clear();
+
         this.visual.lineStyle(2, color.border);
         this.visual.beginFill(color.bgColor);
 
