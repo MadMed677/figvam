@@ -2,7 +2,8 @@ coverage:
   status:
     project:
       default:
-        threshold: 20%
+        target: 0%
+        threshold: 90%
 
         # Trigger success even if coverage is not enough
         if_ci_failed: success
