@@ -7,3 +7,4 @@ coverage:
 
         # Trigger success even if coverage is not enough
         if_ci_failed: success
+    patch: false
