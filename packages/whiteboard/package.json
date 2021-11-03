@@ -4,7 +4,6 @@
   "description": "",
   "main": "src/index.ts",
   "scripts": {
-    "start": "npm run build:dev",
     "build": "webpack --env prod --mode production",
     "lint": "eslint src",
     "test": "jest --config jest.config.js",
