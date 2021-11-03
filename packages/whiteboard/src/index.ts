@@ -22,11 +22,36 @@ import {PixiService} from './services';
 
 export {Engine} from 'typed-ecstasy';
 
-export class Figvam {
-    public create(): {
-        engine: Engine;
-        graphics: PIXI.Application;
-    } {
+interface IFigvamFactoryCreate {
+    engine: Engine;
+    graphics: PIXI.Application;
+}
+
+/**
+ * The Factory for creating Figvam Whiteboard Engine
+ *
+ * ## Example
+ * ```typescript
+ * import {FigvamFactory} from '@figvam/whiteboard'
+ *
+ * const {engine, graphics} = new FigvamFactory().create();
+ *
+ * // Subscribe for each tick and update the engine
+ * graphics.ticker.add(() => {
+ *     engine.update(0.16);
+ * })
+ *
+ * document
+ *  // Take the DOM element to place whiteboard
+ *  .querySelector('#container_for_whiteboard')!
+ *
+ *  // Add all application inside that container
+ *  .appendChild(graphics.view)
+ * ```
+ */
+export class FigvamFactory {
+    /** Creates new engine and PIXI.Application */
+    public create(): IFigvamFactoryCreate {
         const engine = FigvamEngine.getBuilder()
             .withSystem(MouseSystem)
             .withSystem(MovementSystem)

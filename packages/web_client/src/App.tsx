@@ -1,7 +1,7 @@
 import React from 'react';
 import './App.css';
 
-import {Figvam, Engine} from '@figvam/whiteboard';
+import {FigvamFactory, Engine} from '@figvam/whiteboard';
 import * as PIXI from 'pixi.js';
 
 class App extends React.PureComponent<{}> {
@@ -15,7 +15,7 @@ class App extends React.PureComponent<{}> {
     }
 
     componentDidMount() {
-        const {engine, graphics} = new Figvam().create();
+        const {engine, graphics} = new FigvamFactory().create();
 
         this.engine = engine;
         this.graphics = graphics;
