@@ -50,12 +50,12 @@ export const Primary = Template.bind({});
 Primary.args = {
     mode: 'normal',
     position: {
-        x: 100,
-        y: 100,
+        x: 200,
+        y: 200,
     },
     size: {
-        width: 100,
-        height: 100,
+        width: 200,
+        height: 200,
     },
     text: 'Sticker',
     theme: themeService.getLightTheme(),

@@ -5,4 +5,5 @@ export interface IGraphics<T> {
     shouldComponentUpdate(nextProps: T): boolean;
     setProps(props: T): void;
     render(): void;
+    destroy?(): void;
 }

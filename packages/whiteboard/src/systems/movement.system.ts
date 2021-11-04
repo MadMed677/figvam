@@ -1,29 +1,36 @@
-import {Service} from 'typedi';
-import {Entity, EntitySystem, Family} from 'typed-ecstasy';
+import {Inject, Service} from 'typedi';
+import {Entity, EntitySystem} from 'typed-ecstasy';
 
-import {DragComponent, PositionComponent} from '../components';
+import {PositionComponent} from '../components';
+import {EventBusService, IMoveEntities} from '../services';
+import {SignalConnections} from 'typed-signals';
 
 @Service()
 export class MovementSystem extends EntitySystem {
-    private entities: Entity[] = [];
+    @Inject()
+    private readonly eventBusService!: EventBusService;
+    private readonly connections = new SignalConnections();
 
     protected override onEnable(): void {
-        this.entities = this.engine.entities.forFamily(
-            Family.all(PositionComponent, DragComponent).get(),
+        this.connections.add(
+            this.eventBusService.moveEntities.connect(
+                this.moveEntities.bind(this),
+            ),
         );
     }
 
     protected override onDisable(): void {
-        this.entities = [];
+        this.connections.disconnectAll();
     }
 
-    update(): void {
-        for (const entity of this.entities) {
+    private moveEntities(entities: Entity[], options: IMoveEntities): void {
+        for (const entity of entities) {
             const position = entity.require(PositionComponent);
-            const drag = entity.require(DragComponent);
 
-            position.x = drag.x;
-            position.y = drag.y;
+            position.x += options.position.dx;
+            position.y += options.position.dy;
         }
     }
+
+    update(): void {}
 }

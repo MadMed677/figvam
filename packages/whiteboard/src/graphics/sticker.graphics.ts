@@ -1,6 +1,7 @@
 import * as PIXI from 'pixi.js';
 import {IGraphics} from './graphics.interface';
 import {IFigvamTheme} from '../services';
+import {DropShadowFilter} from 'pixi-filters';
 
 export interface IStickerGraphicsProps {
     position: {
@@ -28,11 +29,15 @@ export class StickerGraphics implements IGraphics<IStickerGraphicsProps> {
         wordWrapWidth: 100,
         align: 'center',
     });
+    private readonly selection = new PIXI.Graphics();
+    private readonly shadow = new DropShadowFilter();
 
     constructor(id: number) {
         this.id = id;
 
         this.visual.addChild(this.text);
+
+        this.visual.filters = [this.shadow];
     }
 
     public setProps(props: IStickerGraphicsProps): void {
@@ -56,22 +61,56 @@ export class StickerGraphics implements IGraphics<IStickerGraphicsProps> {
         );
     }
 
-    render(): void {
-        const color =
-            this.props.mode === 'selected'
-                ? {
-                      bgColor: this.props.theme.bgColor.accent,
-                      border: this.props.theme.border.accent,
-                  }
-                : {
-                      bgColor: this.props.theme.bgColor.primary,
-                      border: this.props.theme.border.primary,
-                  };
+    private drawSelection(): void {
+        // Stroke of line border width
+        const strokeWidth = 4;
 
+        // Offset of the visual in pixels
+        const offset = 4 + strokeWidth;
+
+        this.selection.clear();
+        this.selection.lineStyle(
+            strokeWidth,
+            this.props.theme.border.default,
+            0.7,
+        );
+        this.selection.drawRect(
+            // Shift by `x` axes
+            -offset,
+
+            // Shift by `y` axes
+            -offset,
+
+            /**
+             * Add the same size of visual but cover the shifts
+             *  from left and right sides
+             */
+            this.props.size.width + offset * 2,
+            this.props.size.height + offset * 2,
+        );
+        this.selection.endFill();
+    }
+
+    private drawShadow(): void {
+        const distanceRatio = 10;
+
+        this.shadow.color = this.props.theme.shadow.default;
+        this.shadow.alpha = 0.1;
+        this.shadow.blur = 6;
+
+        // 1.22rad = 70 degree
+        // this.shadow.angle = 1.22;
+        // this.shadow.angle = 1.53;
+        this.shadow.angle = 1.4;
+        // this.shadow.quality = 20;
+        // this.shadow.pixelSize = 1;
+        this.shadow.distance = this.props.size.width / distanceRatio;
+    }
+
+    render(): void {
         this.visual.clear();
 
-        this.visual.lineStyle(2, color.border);
-        this.visual.beginFill(color.bgColor);
+        this.visual.beginFill(this.props.theme.bgColor.primary);
 
         this.visual.x = this.props.position.x;
         this.visual.y = this.props.position.y;
@@ -90,9 +129,15 @@ export class StickerGraphics implements IGraphics<IStickerGraphicsProps> {
 
         this.visual.name = String(this.id);
 
-        this.visual.pivot.x = this.props.size.width / 2;
-        this.visual.pivot.y = this.props.size.height / 2;
-
         this.text.text = this.props.text || '';
+
+        if (this.props.mode === 'selected') {
+            this.visual.addChild(this.selection);
+        } else if (this.props.mode === 'normal') {
+            this.visual.removeChild(this.selection);
+        }
+
+        this.drawSelection();
+        this.drawShadow();
     }
 }
