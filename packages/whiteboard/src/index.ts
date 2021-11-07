@@ -5,8 +5,9 @@ import {FigvamEngine} from './core/figvam.engine';
 import {
     MouseSystem,
     MovementSystem,
-    ObjectCreatorSystem,
-    ObjectSelectorSystem,
+    EntityCreatorSystem,
+    EntitySelectorSystem,
+    EntityDeselectorSystem,
     RenderSystem,
 } from './systems';
 import {
@@ -19,6 +20,7 @@ import {
 import {CanvasBackgroundGraphics, StickerGraphics} from './graphics';
 import {Engine} from 'typed-ecstasy';
 import {PixiService} from './services';
+import {EntityDestroyerSystem} from './systems/entity_destroyer.system';
 
 export {Engine} from 'typed-ecstasy';
 
@@ -55,8 +57,10 @@ export class FigvamFactory {
         const engine = FigvamEngine.getBuilder()
             .withSystem(MouseSystem)
             .withSystem(MovementSystem)
-            .withSystem(ObjectCreatorSystem)
-            .withSystem(ObjectSelectorSystem)
+            .withSystem(EntityDeselectorSystem)
+            .withSystem(EntityCreatorSystem)
+            .withSystem(EntitySelectorSystem)
+            .withSystem(EntityDestroyerSystem)
             .withSystem(RenderSystem)
             .withEntity(entity => {
                 entity.add(

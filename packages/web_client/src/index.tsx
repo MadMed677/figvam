@@ -7,9 +7,18 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 
+import {FigvamFactory} from '@figvam/whiteboard';
+
+const figvamWhiteboard = new FigvamFactory().create();
+
+window.engine = figvamWhiteboard.engine;
+
 ReactDOM.render(
     <React.StrictMode>
-        <App />
+        <App
+            engine={figvamWhiteboard.engine}
+            graphics={figvamWhiteboard.graphics}
+        />
     </React.StrictMode>,
     document.getElementById('root'),
 );

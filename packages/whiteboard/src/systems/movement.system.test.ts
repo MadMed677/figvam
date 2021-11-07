@@ -1,17 +1,24 @@
 import {MovementSystem} from './';
 import {FigvamEngine} from '../core/figvam.engine';
-import {DragComponent, PositionComponent} from '../components';
-import {Engine} from 'typed-ecstasy';
+import {PositionComponent} from '../components';
+import {EventBusService} from '../services';
 
 describe('MovementSystem', () => {
-    test('should change "PositionComponent" when "DragComponent" provide new "x" and "y"', () => {
+    test('should change "PositionComponent" when Event Bus triggers "moveEntities" signal', () => {
         const engine = FigvamEngine.getBuilder()
             .withSystem(MovementSystem)
             .withEntity(entity => {
                 entity.add(new PositionComponent(0, 0));
-                entity.add(new DragComponent(10, 20));
             })
             .build();
+
+        const eventBus = engine.getContainer().get(EventBusService);
+        eventBus.moveEntities.emit(engine.entities.getAll(), {
+            position: {
+                dx: 10,
+                dy: 20,
+            },
+        });
 
         engine.update(0.16);
 
@@ -30,7 +37,6 @@ describe('MovementSystem', () => {
             .withSystem(MovementSystem)
             .withEntity(entity => {
                 entity.add(new PositionComponent(0, 0));
-                entity.add(new DragComponent(10, 20));
             })
             .build();
 

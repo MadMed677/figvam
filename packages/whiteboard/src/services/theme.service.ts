@@ -16,6 +16,9 @@ export interface IFigvamTheme {
         primary: number;
         accent: number;
     };
+    shadow: {
+        default: number;
+    };
 }
 
 @Service()
@@ -57,9 +60,12 @@ export class ThemeService {
                 accent: PIXI.utils.string2hex('#D5F5E3'),
             },
             border: {
-                default: PIXI.utils.string2hex('#2E4053'),
+                default: PIXI.utils.string2hex('#18a0fb'),
                 primary: PIXI.utils.string2hex('#F9E79F'),
                 accent: PIXI.utils.string2hex('#ABEBC6'),
+            },
+            shadow: {
+                default: PIXI.utils.string2hex('#000020'),
             },
         };
     }
@@ -68,13 +74,16 @@ export class ThemeService {
         return {
             bgColor: {
                 default: PIXI.utils.string2hex('#212F3D'),
-                primary: PIXI.utils.string2hex('#F1C40F'),
+                primary: PIXI.utils.string2hex('#FFEB3B'),
                 accent: PIXI.utils.string2hex('#58D68D'),
             },
             border: {
-                default: PIXI.utils.string2hex('#FFFFFF'),
+                default: PIXI.utils.string2hex('#18a0fb'),
                 primary: PIXI.utils.string2hex('#D4AC0D'),
                 accent: PIXI.utils.string2hex('#2ECC71'),
+            },
+            shadow: {
+                default: PIXI.utils.string2hex('#000000'),
             },
         };
     }

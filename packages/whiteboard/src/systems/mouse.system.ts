@@ -1,38 +1,35 @@
-import {Service} from 'typedi';
+import {Inject, Service} from 'typedi';
 import * as PIXI from 'pixi.js';
-import {Signal} from 'typed-signals';
-import {Entity, EntitySystem} from 'typed-ecstasy';
+import {Entity, EntitySystem, Family} from 'typed-ecstasy';
 
-import {PixiService} from '../services';
-
-export interface IClickOptions {
-    position: {
-        x: number;
-        y: number;
-    };
-}
-
-export interface IDragOptions {
-    state: 'start' | 'progress' | 'end';
-    position: {
-        x: number;
-        y: number;
-    };
-}
+import {EventBusService, PixiService} from '../services';
+import {
+    SelectableComponent,
+    SelectedComponent,
+    SpawnableComponent,
+} from '../components';
 
 @Service()
 export class MouseSystem extends EntitySystem {
     private readonly interactionManager: PIXI.InteractionManager;
     private pointerDown = false;
     private pointerMove = false;
+
+    /**
+     * @todo LongClick shouldn't have a different methods
+     * It definitely must have the same logic as `click` does
+     *  because we may click -> drag or `doubleClick` -> drag
+     *  and all of these scenarios is definitely fine
+     *
+     * But now they are different and it will cause some issues
+     *  in the future
+     */
+    private longClick = false;
+    private longClickTimeout = 0;
     private activeEntity: Entity | undefined;
 
-    public onClick = new Signal<
-        (entity: Entity, options: IClickOptions) => void
-    >();
-    public onDrag = new Signal<
-        (entity: Entity, options: IDragOptions) => void
-    >();
+    @Inject()
+    private readonly eventBusService!: EventBusService;
 
     constructor(pixiService: PixiService) {
         super();
@@ -40,10 +37,12 @@ export class MouseSystem extends EntitySystem {
         this.onPointerDown = this.onPointerDown.bind(this);
         this.onPointerUp = this.onPointerUp.bind(this);
         this.onPointerMove = this.onPointerMove.bind(this);
+        this.onLongClickStart = this.onLongClickStart.bind(this);
+        this.onLongClickProgress = this.onLongClickProgress.bind(this);
+        this.onLongClickStop = this.onLongClickStop.bind(this);
 
         this.interactionManager = pixiService.getApplication().renderer.plugins
             .interaction as PIXI.InteractionManager;
-        this.interactionManager.autoPreventDefault = true;
     }
 
     protected override onEnable(): void {
@@ -69,24 +68,47 @@ export class MouseSystem extends EntitySystem {
 
         const entityId = Number(e.target.name);
         this.activeEntity = this.engine.entities.get(entityId)!;
+
+        this.longClickTimeout = window.setTimeout(() => {
+            this.onLongClickStart(e);
+        }, 300);
     }
 
     private onPointerUp(e: PIXI.InteractionEvent) {
         if (this.pointerDown) {
+            this.pointerDown = false;
+
+            if (this.longClick) {
+                this.onLongClickStop(e);
+
+                return;
+            }
+
             if (this.pointerMove) {
                 this.pointerMove = false;
 
                 this.onDragEnd(e, this.activeEntity!);
+                // Click
             } else {
                 this.onClickStart(e, this.activeEntity!);
             }
-
-            this.pointerDown = false;
         }
+
+        this.clearLongClickTimeout();
     }
 
     private onPointerMove(e: PIXI.InteractionEvent) {
         if (this.pointerDown) {
+            this.clearLongClickTimeout();
+
+            // Handle long clicks
+            if (this.longClick) {
+                this.onLongClickProgress(e);
+
+                return;
+            }
+
+            // Drag
             if (!this.pointerMove) {
                 this.pointerMove = true;
 
@@ -98,26 +120,137 @@ export class MouseSystem extends EntitySystem {
     }
 
     private onClickStart(e: PIXI.InteractionEvent, entity: Entity) {
-        this.onClick.emit(entity, {
-            position: {
-                x: e.data.global.x,
-                y: e.data.global.y,
-            },
-        });
+        /** Trigger an event to remove selection */
+        this.eventBusService.removeSelection.emit();
+
+        // We may spawn entities only by clicking on Spawnable entities
+        if (entity.get(SpawnableComponent)) {
+            this.eventBusService.createEntity.emit({
+                blueprint: {
+                    name: 'sticker',
+                    data: {
+                        size: {
+                            width: 100,
+                            height: 100,
+                        },
+                    },
+                },
+                position: {
+                    x: e.data.global.x,
+                    y: e.data.global.y,
+                },
+            });
+
+            return;
+        }
+
+        // We may select only Selectable entities
+        if (entity.get(SelectableComponent)) {
+            this.eventBusService.selectEntity.emit(entity, {
+                position: {
+                    x: e.data.global.x,
+                    y: e.data.global.y,
+                },
+            });
+
+            return;
+        }
     }
 
+    private startDragCoords = {
+        x: 0,
+        y: 0,
+    };
+
     private onDragStart(e: PIXI.InteractionEvent, entity: Entity) {
-        this.onDrag.emit(entity, {
+        if (entity.get(SpawnableComponent)) {
+            this.eventBusService.showSelectionTool.emit({
+                state: 'start',
+                position: {
+                    x: e.data.global.x,
+                    y: e.data.global.y,
+                },
+            });
+        }
+
+        this.startDragCoords.x = e.data.global.x;
+        this.startDragCoords.y = e.data.global.y;
+    }
+
+    private onDragging(e: PIXI.InteractionEvent, entity: Entity) {
+        if (entity.get(SelectableComponent)) {
+            if (!entity.get(SelectedComponent)) {
+                this.eventBusService.removeSelection.emit();
+
+                /** Trigger to move entities */
+                this.eventBusService.moveEntities.emit([entity], {
+                    position: {
+                        dx: e.data.global.x - this.startDragCoords.x,
+                        dy: e.data.global.y - this.startDragCoords.y,
+                    },
+                });
+            } else {
+                const entities = this.engine.entities.forFamily(
+                    Family.all(SelectedComponent).get(),
+                );
+
+                this.eventBusService.moveEntities.emit(entities, {
+                    position: {
+                        dx: e.data.global.x - this.startDragCoords.x,
+                        dy: e.data.global.y - this.startDragCoords.y,
+                    },
+                });
+            }
+        } else if (entity.get(SpawnableComponent)) {
+            this.eventBusService.showSelectionTool.emit({
+                state: 'progress',
+                position: {
+                    x: e.data.global.x,
+                    y: e.data.global.y,
+                },
+            });
+        }
+
+        this.startDragCoords.x = e.data.global.x;
+        this.startDragCoords.y = e.data.global.y;
+    }
+
+    private onDragEnd(e: PIXI.InteractionEvent, entity: Entity): void {
+        if (entity.get(SpawnableComponent)) {
+            this.eventBusService.showSelectionTool.emit({
+                state: 'end',
+                position: {
+                    x: e.data.global.x,
+                    y: e.data.global.y,
+                },
+            });
+        }
+
+        this.startDragCoords = {
+            x: 0,
+            y: 0,
+        };
+    }
+
+    private onLongClickStart(e: PIXI.InteractionEvent): void {
+        this.longClick = true;
+
+        this.interactionManager.cursorStyles.default = 'crosshair';
+        this.interactionManager.setCursorMode('crosshair');
+
+        this.eventBusService.showSelectionTool.emit({
             state: 'start',
             position: {
                 x: e.data.global.x,
                 y: e.data.global.y,
             },
         });
+
+        this.clearLongClickTimeout();
     }
 
-    private onDragging(e: PIXI.InteractionEvent, entity: Entity) {
-        this.onDrag.emit(entity, {
+    private onLongClickProgress(e: PIXI.InteractionEvent): void {
+        this.eventBusService.showSelectionTool.emit({
             state: 'progress',
             position: {
                 x: e.data.global.x,
@@ -126,14 +259,23 @@ export class MouseSystem extends EntitySystem {
         });
     }
 
-    private onDragEnd(e: PIXI.InteractionEvent, entity: Entity) {
-        this.onDrag.emit(entity, {
+    private onLongClickStop(e: PIXI.InteractionEvent): void {
+        this.longClick = false;
+
+        this.interactionManager.cursorStyles.default = 'inherit';
+        this.interactionManager.setCursorMode('inherit');
+
+        this.eventBusService.showSelectionTool.emit({
             state: 'end',
             position: {
                 x: e.data.global.x,
                 y: e.data.global.y,
             },
         });
+    }
+
+    private clearLongClickTimeout() {
+        window.clearTimeout(this.longClickTimeout);
     }
 
     update(): void {}

@@ -1,43 +1,48 @@
 import React from 'react';
 import './App.css';
 
-import {FigvamFactory, Engine} from '@figvam/whiteboard';
+import {Engine} from '@figvam/whiteboard';
 import * as PIXI from 'pixi.js';
 
-class App extends React.PureComponent<{}> {
-    private engine!: Engine;
-    private graphics!: PIXI.Application;
+interface IApplicationProps {
+    engine: Engine;
+    graphics: PIXI.Application;
+}
 
-    constructor(props: {}) {
+class App extends React.PureComponent<IApplicationProps> {
+    constructor(props: IApplicationProps) {
         super(props);
 
         this.tick = this.tick.bind(this);
     }
 
     componentDidMount() {
-        const {engine, graphics} = new FigvamFactory().create();
+        this.props.graphics.ticker.add(this.tick);
 
-        this.engine = engine;
-        this.graphics = graphics;
+        const canvasContainer = document.querySelector('#canvas_container')!;
 
-        this.graphics.ticker.add(this.tick);
-
-        document
-            .querySelector('#canvas_container')!
-            .appendChild(this.graphics.view);
+        /**
+         * If Pixi App already registered inside DOM then we do nothing
+         *  otherwise we have to add it
+         */
+        if (!canvasContainer.hasChildNodes()) {
+            document
+                .querySelector('#canvas_container')!
+                .appendChild(this.props.graphics.view);
+        }
     }
 
     componentWillUnmount() {
-        this.graphics.ticker.remove(this.tick);
+        this.props.graphics.ticker.remove(this.tick);
 
         document
             .querySelector('#canvas_container')!
-            .removeChild(this.graphics.view);
+            .removeChild(this.props.graphics.view);
     }
 
     private tick() {
-        this.engine.update(
-            Math.min(0.032, this.graphics.ticker.elapsedMS / 1000),
+        this.props.engine.update(
+            Math.min(0.032, this.props.graphics.ticker.elapsedMS / 1000),
         );
     }
 

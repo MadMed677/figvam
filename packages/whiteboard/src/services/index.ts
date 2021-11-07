@@ -1,4 +1,12 @@
-export {FpsService} from './fps.service';
-export {PixiService} from './pixi.service';
-export {ThemeService} from './theme.service';
+export * from './fps.service';
+export * from './pixi.service';
+export * from './theme.service';
+export * from './event_bus.service';
+
+export type {
+    ICreateEntity,
+    IMoveEntities,
+    ISelectEntity,
+    ISelectionTool,
+} from './event_bus.service';
 export type {IFigvamTheme} from './theme.service';
