@@ -1,0 +1,57 @@
+.app-footer {
+	position: fixed;
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	align-items: end;
+	pointer-events: none;
+	padding: 24px;
+	top: 0;
+	right: 0;
+	left: 0;
+	bottom: 0;
+}
+
+.app-footer__toolbar {
+	height: 80px;
+	pointer-events: auto;
+	display: flex;
+	flex-direction: row;
+	flex-shrink: 1;
+	flex-basis: auto;
+	min-width: 0;
+	box-shadow: 0 0 0 1px rgb(0 0 0 / 10%), 0 3px 16px rgb(0 0 0 / 8%), 0 2px 6px 1px rgb(0 0 0 / 9%);
+	border-radius: 5px;
+	overflow: hidden;
+}
+
+.app-footer__toolbar--vertical-holder {
+	display: flex;
+	flex-direction: column;
+	flex-shrink: 0;
+}
+
+.app-footer__toolbar--vertical-holder--item {
+
+}
+
+.app-footer__toolbar--horizontal-holder {
+	display: flex;
+	flex-direction: row;
+	flex-shrink: 0;
+}
+
+.app-footer__toolbar--horizontal-holder--item {
+
+}
+
+.app-footer__toolbar--item__active {
+	fill: #fff;
+	background-color: #000;
+}
+
+.app-footer__divider {
+	width: 1px;
+	background-color: rgba(0, 0, 0, 0.1);
+	align-self: stretch;
+}
