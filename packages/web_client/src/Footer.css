@@ -20,9 +20,10 @@
 	flex-shrink: 1;
 	flex-basis: auto;
 	min-width: 0;
-	box-shadow: 0 0 0 1px rgb(0 0 0 / 10%), 0 3px 16px rgb(0 0 0 / 8%), 0 2px 6px 1px rgb(0 0 0 / 9%);
+	box-shadow: 0 0 0 1px rgb(var(--shadow-color--default) / 10%), 0 3px 16px rgb(var(--shadow-color--default) / 8%), 0 2px 6px 1px rgb(var(--shadow-color--default) / 9%);
 	border-radius: 5px;
 	overflow: hidden;
+	background-color: var(--background-color--primary);
 }
 
 .app-footer__toolbar--vertical-holder {
@@ -32,7 +33,8 @@
 }
 
 .app-footer__toolbar--vertical-holder--item {
-
+	cursor: pointer;
+	fill: var(--text-color--default);
 }
 
 .app-footer__toolbar--horizontal-holder {
@@ -42,12 +44,13 @@
 }
 
 .app-footer__toolbar--horizontal-holder--item {
-
+	fill: var(--text-color--default);
 }
 
 .app-footer__toolbar--item__active {
-	fill: #fff;
-	background-color: #000;
+	cursor: inherit;
+	fill: var(--text-color--default);
+	background-color: var(--background-color--accent);
 }
 
 .app-footer__divider {

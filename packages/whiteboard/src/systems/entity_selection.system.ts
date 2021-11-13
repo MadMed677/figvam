@@ -56,6 +56,31 @@ export class EntitySelectionSystem extends EntitySystem {
             return;
         }
 
+        /**
+         * If we don't have any selection entities
+         *  but we have selected entities then
+         *  create one and quick until next tick
+         */
+        if (this.selectionEntities.length === 0) {
+            this.eventBus.createEntity.emit({
+                position: {
+                    x: 0,
+                    y: 0,
+                },
+                blueprint: {
+                    name: 'selection',
+                    data: {
+                        size: {
+                            width: 0,
+                            height: 0,
+                        },
+                    },
+                },
+            });
+
+            return;
+        }
+
         const firstEntityPosition =
             this.selectedEntities[0].require(PositionComponent);
 

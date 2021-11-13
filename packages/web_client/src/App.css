@@ -1,3 +1,21 @@
+:root {
+  --background-color--default: #fff;
+  --background-color--primary: #eee;
+  --background-color--accent: #eee;
+  --shadow-color--default: #fff;
+  --text-color--default: #000;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background-color--default: #2C3E50;
+    --background-color--primary: #34495E;
+    --background-color--accent: #F39C12;
+    --shadow-color--default: #fff;
+    --text-color--default: #fff;
+  }
+}
+
 .app {
 }
 
@@ -11,7 +29,7 @@
   display: flex;
   justify-content: space-between;
   flex-direction: row;
-  background-color: white;
+  background-color: var(--background-color--default);
 }
 
 .app-header__menu-button {
@@ -19,6 +37,6 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: #eee;
-  color: #000;
+  background-color: var(--background-color--primary);
+  color: var(--text-color--default);
 }

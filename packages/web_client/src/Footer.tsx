@@ -1,9 +1,57 @@
 import React from 'react';
 import './Footer.css';
 
-interface IFooter {}
+/** Canvas Interaction */
+interface SelectionItem {
+    /**
+     * Interaction type. It might be
+     *  - hand - canvas navigation. All clicks by whiteboard will be avoided except moving
+     *  - cursor - default mode. Clicks will be transmitted to Canvas
+     */
+    type: 'hand' | 'cursor';
 
-export class Footer extends React.PureComponent<IFooter> {
+    /** Is current item active or not */
+    active: boolean;
+}
+
+/** Canvas Creation */
+interface CreationItem {
+    type: 'creation';
+
+    /**
+     * Creating type. It might be
+     *  - sticker - create `sticker` entity on whiteboard
+     *  - shape - Not supported yet
+     */
+    subType: 'sticker' | 'shape';
+
+    /** Is current item active or not */
+    active: boolean;
+}
+
+interface IFooterProps {}
+interface IFooterState {
+    selectionItems: Array<SelectionItem>;
+}
+
+export class Footer extends React.PureComponent<IFooterProps, IFooterState> {
+    constructor(props: IFooterProps) {
+        super(props);
+
+        this.state = {
+            selectionItems: [
+                {
+                    type: 'cursor',
+                    active: true,
+                },
+                {
+                    type: 'hand',
+                    active: false,
+                },
+            ],
+        };
+    }
+
     render() {
         return (
             <div className="app-footer">
@@ -57,13 +105,7 @@ export class Footer extends React.PureComponent<IFooter> {
                                 viewBox="0 0 144 144"
                                 xmlns="http://www.w3.org/2000/svg"
                             >
-                                <rect
-                                    x="10"
-                                    y="20"
-                                    width="124"
-                                    height="124"
-                                    fill="#d99bff"
-                                />
+                                <rect x="10" y="20" width="124" height="124" />
                             </svg>
                         </div>
                     </div>

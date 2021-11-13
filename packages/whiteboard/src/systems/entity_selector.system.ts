@@ -48,7 +48,6 @@ export class EntitySelectorSystem extends EntitySystem {
     }
 
     private selectEntity(entity: Entity) {
-        console.log('is tool?: ', entity.has(SelectionToolComponent));
         this.selectionQueue.push(entity);
     }
 
@@ -95,28 +94,8 @@ export class EntitySelectorSystem extends EntitySystem {
                 this.eventBusService.destroyEntityByComponents.emit([
                     SelectionToolComponent,
                 ]);
-
-                this.showSelector();
             }
         }
-    }
-
-    private showSelector(): void {
-        this.eventBusService.createEntity.emit({
-            position: {
-                x: 0,
-                y: 0,
-            },
-            blueprint: {
-                name: 'selection',
-                data: {
-                    size: {
-                        width: 0,
-                        height: 0,
-                    },
-                },
-            },
-        });
     }
 
     update(): void {
