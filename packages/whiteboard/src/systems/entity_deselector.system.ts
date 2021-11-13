@@ -33,7 +33,10 @@ export class EntityDeselectorSystem extends EntitySystem {
          *  signal
          */
         this.connections.add(
-            this.eventBusService.removeSelection.connect(this.deselect),
+            this.eventBusService.removeSelection.connect(this.deselectAll),
+        );
+        this.connections.add(
+            this.eventBusService.deselectEntity.connect(this.deselectOne),
         );
     }
 
@@ -43,7 +46,11 @@ export class EntityDeselectorSystem extends EntitySystem {
         this.connections.disconnectAll();
     }
 
-    private deselect = (): void => {
+    private deselectAll = (): void => {
+        this.deselectObjects = true;
+    };
+
+    private deselectOne = (entity: Entity): void => {
         this.deselectObjects = true;
     };
 

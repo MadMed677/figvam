@@ -51,8 +51,8 @@ export class RenderSystem extends IteratingSystem {
             graphics.visual.render();
         }
 
-        this.pixiService
-            .getApplication()
-            .stage.addChild(graphics.visual.visual);
+        // this.pixiService
+        //     .getApplication()
+        //     .stage.addChild(graphics.visual.visual);
     }
 }

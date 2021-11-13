@@ -5,3 +5,6 @@ export * from './spawnable.component';
 export * from './selectable.component';
 export * from './selected.component';
 export * from './destroyed.component';
+export * from './selection_tool.component';
+export * from './selection.component';
+export * from './physics.component';

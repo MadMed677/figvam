@@ -9,9 +9,12 @@ import {
     EntitySelectorSystem,
     EntityDeselectorSystem,
     RenderSystem,
+    CollisionSystem,
+    EntitySelectionSystem,
 } from './systems';
 import {
     GraphicsComponent,
+    PhysicsComponent,
     PositionComponent,
     SelectableComponent,
     SizeComponent,
@@ -60,7 +63,9 @@ export class FigvamFactory {
             .withSystem(EntityDeselectorSystem)
             .withSystem(EntityCreatorSystem)
             .withSystem(EntitySelectorSystem)
+            .withSystem(EntitySelectionSystem)
             .withSystem(EntityDestroyerSystem)
+            .withSystem(CollisionSystem)
             .withSystem(RenderSystem)
             .withEntity(entity => {
                 entity.add(
@@ -79,6 +84,7 @@ export class FigvamFactory {
                     new GraphicsComponent(new StickerGraphics(entity.getId())),
                 );
                 entity.add(new SelectableComponent());
+                entity.add(new PhysicsComponent());
                 entity.add(new PositionComponent(200, 200));
                 entity.add(new SizeComponent(100, 100));
             })
