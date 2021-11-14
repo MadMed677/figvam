@@ -53,6 +53,16 @@ export class EntitySelectionSystem extends EntitySystem {
     update(): void {
         /** Do nothing if we have only one selected entity */
         if (this.selectedEntities.length <= 1) {
+            /**
+             * If we have less then 2 selected entities but we still have
+             *  "selection" entities we have to destroy them
+             */
+            if (this.selectionEntities.length) {
+                this.eventBus.destroyEntityByComponents.emit([
+                    SelectionComponent,
+                ]);
+            }
+
             return;
         }
 

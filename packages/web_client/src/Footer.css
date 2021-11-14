@@ -35,6 +35,7 @@
 
 .app-footer__toolbar--vertical-holder--item {
 	cursor: pointer;
+	color: var(--text-color--default);
 	fill: var(--text-color--default);
 }
 

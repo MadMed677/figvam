@@ -122,6 +122,7 @@ export class Footer extends React.PureComponent<IFooterProps, IFooterState> {
                     <div className="app-footer__toolbar--vertical-holder">
                         {this.state.selectionItems.map(item => (
                             <ToolbarSelectionItem
+                                key={item.type}
                                 type={item.type}
                                 onClick={this.onSelectionItemClicked}
                                 active={item.active}
@@ -132,6 +133,7 @@ export class Footer extends React.PureComponent<IFooterProps, IFooterState> {
                     <div className="app-footer__toolbar--horizontal-holder">
                         {this.state.creationItems.map(item => (
                             <ToolbarCreationItem
+                                key={item.type}
                                 type={item.type}
                                 onClick={this.onCreationItemClicked}
                                 active={item.active}
