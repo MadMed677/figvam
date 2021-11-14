@@ -1,9 +1,13 @@
 :root {
-  --background-color--default: #fff;
-  --background-color--primary: #eee;
-  --background-color--accent: #eee;
-  --shadow-color--default: #fff;
+  --background-color--default: #BDC3C7;
+  --background-color--primary: #ECF0F1;
+  --background-color--accent: #F39C12;
+
+  --shadow-color--default: #FFF;
+
   --text-color--default: #000;
+  --text-color--primary: #F1C40F;
+  --text-color--accent: #FFF;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -11,8 +15,12 @@
     --background-color--default: #2C3E50;
     --background-color--primary: #34495E;
     --background-color--accent: #F39C12;
+
     --shadow-color--default: #fff;
+
     --text-color--default: #fff;
+    --text-color--primary: #fff;
+    --text-color--accent: #fff;
   }
 }
 
