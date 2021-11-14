@@ -1,7 +1,7 @@
 import React from 'react';
 import './Footer.css';
 
-import {ToolbarSelectionItem} from './components';
+import {ToolbarSelectionItem, ToolbarCreationItem} from './components';
 
 /** Canvas Interaction */
 interface SelectionItem {
@@ -18,14 +18,12 @@ interface SelectionItem {
 
 /** Canvas Creation */
 interface CreationItem {
-    type: 'creation';
-
     /**
      * Creating type. It might be
      *  - sticker - create `sticker` entity on whiteboard
      *  - shape - Not supported yet
      */
-    subType: 'sticker' | 'shape';
+    type: 'sticker' | 'shape';
 
     /** Is current item active or not */
     active: boolean;
@@ -52,7 +50,16 @@ export class Footer extends React.PureComponent<IFooterProps, IFooterState> {
                     active: false,
                 },
             ],
-            creationItems: [],
+            creationItems: [
+                {
+                    type: 'sticker',
+                    active: false,
+                },
+                {
+                    type: 'shape',
+                    active: false,
+                },
+            ],
         };
     }
 
@@ -71,7 +78,39 @@ export class Footer extends React.PureComponent<IFooterProps, IFooterState> {
             };
         });
 
+        const updatedCreationItems = this.state.creationItems.map(item => ({
+            ...item,
+            active: false,
+        }));
+
         this.setState({
+            selectionItems: updatedSelectionItems,
+            creationItems: updatedCreationItems,
+        });
+    };
+
+    private onCreationItemClicked = (type: 'shape' | 'sticker'): void => {
+        const updatedSelectionItems = this.state.selectionItems.map(item => ({
+            ...item,
+            active: false,
+        }));
+
+        const updatedCreationItems = this.state.creationItems.map(item => {
+            if (type !== item.type) {
+                return {
+                    ...item,
+                    active: false,
+                };
+            }
+
+            return {
+                ...item,
+                active: true,
+            };
+        });
+
+        this.setState({
+            creationItems: updatedCreationItems,
             selectionItems: updatedSelectionItems,
         });
     };
@@ -91,26 +130,13 @@ export class Footer extends React.PureComponent<IFooterProps, IFooterState> {
                     </div>
                     <div className="app-footer__divider" />
                     <div className="app-footer__toolbar--horizontal-holder">
-                        <div className="app-footer__toolbar--horizontal-holder--item">
-                            <svg
-                                height="144"
-                                width="144"
-                                viewBox="0 0 144 144"
-                                xmlns="http://www.w3.org/2000/svg"
-                            >
-                                <circle cx="72" cy="72" r="56"></circle>
-                            </svg>
-                        </div>
-                        <div className="app-footer__toolbar--horizontal-holder--item">
-                            <svg
-                                height="144"
-                                width="144"
-                                viewBox="0 0 144 144"
-                                xmlns="http://www.w3.org/2000/svg"
-                            >
-                                <rect x="10" y="20" width="124" height="124" />
-                            </svg>
-                        </div>
+                        {this.state.creationItems.map(item => (
+                            <ToolbarCreationItem
+                                type={item.type}
+                                onClick={this.onCreationItemClicked}
+                                active={item.active}
+                            />
+                        ))}
                     </div>
                 </div>
             </div>

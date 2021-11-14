@@ -44,3 +44,40 @@ export const ToolbarSelectionItem: React.FC<IToolbarSelectionItemProps> =
             )}
         </div>
     );
+
+interface IToolbarCreationItemProps {
+    type: 'sticker' | 'shape';
+    active: boolean;
+    onClick: (type: 'sticker' | 'shape') => void;
+}
+
+export const ToolbarCreationItem: React.FC<IToolbarCreationItemProps> =
+    props => (
+        <div
+            className={`app-footer__toolbar--horizontal-holder--item ${
+                props.active && 'app-footer__toolbar--item__active'
+            }`}
+            onClick={() => props.onClick(props.type)}
+        >
+            {props.type === 'sticker' && (
+                <svg
+                    height="144"
+                    width="144"
+                    viewBox="0 0 144 144"
+                    xmlns="http://www.w3.org/2000/svg"
+                >
+                    <rect x="10" y="20" width="124" height="124" />
+                </svg>
+            )}
+            {props.type === 'shape' && (
+                <svg
+                    height="144"
+                    width="144"
+                    viewBox="0 0 144 144"
+                    xmlns="http://www.w3.org/2000/svg"
+                >
+                    <circle cx="72" cy="72" r="56"></circle>
+                </svg>
+            )}
+        </div>
+    );
