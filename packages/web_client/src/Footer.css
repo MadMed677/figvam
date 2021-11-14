@@ -46,12 +46,32 @@
 
 .app-footer__toolbar--horizontal-holder--item {
 	fill: var(--text-color--primary);
+	color: var(--text-color--default);
+	cursor: pointer;
+}
+
+.app-footer__toolbar--horizontal-holder-wrapper {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	padding-top: 10px;
+}
+
+.app-footer__toolbar--horizontal-holder--item svg {
+	transition: 0.2s;
+	transform: translateY(10px);
+	transition-timing-function: cubic-bezier(0.4, 0, 1, 1);
 }
 
 .app-footer__toolbar--item__active {
 	cursor: inherit;
 	fill: var(--text-color--accent);
+	color: var(--text-color--accent);
 	background-color: var(--background-color--accent);
+}
+
+.app-footer__toolbar--item__active svg {
+	transform: translateY(0px);
 }
 
 .app-footer__divider {

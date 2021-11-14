@@ -1,4 +1,5 @@
 import React from 'react';
+import classNames from 'classnames';
 
 interface IToolbarSelectionItemProps {
     type: 'hand' | 'cursor';
@@ -9,9 +10,10 @@ interface IToolbarSelectionItemProps {
 export const ToolbarSelectionItem: React.FC<IToolbarSelectionItemProps> =
     props => (
         <div
-            className={`app-footer__toolbar--vertical-holder--item ${
-                props.active && 'app-footer__toolbar--item__active'
-            }`}
+            className={classNames({
+                'app-footer__toolbar--vertical-holder--item': true,
+                'app-footer__toolbar--item__active': props.active,
+            })}
             onClick={() => props.onClick(props.type)}
         >
             {props.type === 'cursor' && (
@@ -54,30 +56,37 @@ interface IToolbarCreationItemProps {
 export const ToolbarCreationItem: React.FC<IToolbarCreationItemProps> =
     props => (
         <div
-            className={`app-footer__toolbar--horizontal-holder--item ${
-                props.active && 'app-footer__toolbar--item__active'
-            }`}
+            className={classNames({
+                'app-footer__toolbar--horizontal-holder--item': true,
+                'app-footer__toolbar--item__active': props.active,
+            })}
             onClick={() => props.onClick(props.type)}
         >
             {props.type === 'sticker' && (
-                <svg
-                    height="144"
-                    width="144"
-                    viewBox="0 0 144 144"
-                    xmlns="http://www.w3.org/2000/svg"
-                >
-                    <rect x="10" y="20" width="124" height="124" />
-                </svg>
+                <div className="app-footer__toolbar--horizontal-holder-wrapper">
+                    <div>Sticker</div>
+                    <svg
+                        height="144"
+                        width="144"
+                        viewBox="0 0 144 144"
+                        xmlns="http://www.w3.org/2000/svg"
+                    >
+                        <rect x="30" y="20" width="84" height="84" />
+                    </svg>
+                </div>
             )}
             {props.type === 'shape' && (
-                <svg
-                    height="144"
-                    width="144"
-                    viewBox="0 0 144 144"
-                    xmlns="http://www.w3.org/2000/svg"
-                >
-                    <circle cx="72" cy="72" r="56"></circle>
-                </svg>
+                <div className="app-footer__toolbar--horizontal-holder-wrapper">
+                    <div>Shape</div>
+                    <svg
+                        height="144"
+                        width="144"
+                        viewBox="0 0 144 144"
+                        xmlns="http://www.w3.org/2000/svg"
+                    >
+                        <circle cx="72" cy="72" r="56"></circle>
+                    </svg>
+                </div>
             )}
         </div>
     );
