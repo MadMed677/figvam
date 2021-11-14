@@ -1,6 +1,6 @@
 import {Service} from 'typedi';
 import {Signal} from 'typed-signals';
-import {Entity} from 'typed-ecstasy';
+import {Entity, ComponentConstructor} from 'typed-ecstasy';
 
 interface IStickerData {
     name: 'sticker';
@@ -22,7 +22,17 @@ interface ISelectionToolData {
     };
 }
 
-type IData = IStickerData | ISelectionToolData;
+interface ISelectionCreationToolData {
+    name: 'selection_tool';
+    data: {
+        size: {
+            width: number;
+            height: number;
+        };
+    };
+}
+
+type IData = IStickerData | ISelectionToolData | ISelectionCreationToolData;
 
 export interface ICreateEntity {
     position: {
@@ -64,10 +74,16 @@ export class EventBusService {
     /** An event that triggers the destroying an entity */
     public readonly destroyEntity = new Signal<(entity: Entity) => void>();
 
-    /** An event which triggers selecting an entity */
-    public readonly selectEntity = new Signal<
-        (entity: Entity, options: ISelectEntity) => void
+    /** An event that triggers the destroying an entity by list of components */
+    public readonly destroyEntityByComponents = new Signal<
+        (components: ComponentConstructor[]) => void
     >();
+
+    /** An event which triggers to select an entity */
+    public readonly selectEntity = new Signal<(entity: Entity) => void>();
+
+    /** An event which triggers to deselect an entity */
+    public readonly deselectEntity = new Signal<(entity: Entity) => void>();
 
     /** An event which triggers move entities */
     public readonly moveEntities = new Signal<

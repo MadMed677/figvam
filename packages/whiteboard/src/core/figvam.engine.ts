@@ -1,4 +1,6 @@
 import {Engine, Entity, EntitySystem, SystemConstructor} from 'typed-ecstasy';
+import {PixiService} from '../services';
+import {GraphicsComponent} from '../components';
 
 type PublicConstructor<T> = new () => T;
 
@@ -42,8 +44,17 @@ export class FigvamEngine {
             ): IEngineBuilder {
                 const entity = new Entity();
                 this.engine.entities.add(entity);
+                const pixiService = this.engine.getContainer().get(PixiService);
 
                 entityBuilder(entity);
+
+                const graphics = entity.get(GraphicsComponent);
+
+                if (graphics) {
+                    pixiService
+                        .getApplication()
+                        .stage.addChild(graphics.visual.visual);
+                }
 
                 return this;
             }

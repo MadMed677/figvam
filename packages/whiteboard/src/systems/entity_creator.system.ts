@@ -2,23 +2,29 @@ import {Entity, EntitySystem} from 'typed-ecstasy';
 import {Inject, Service} from 'typedi';
 import {
     GraphicsComponent,
+    PhysicsComponent,
     PositionComponent,
     SelectableComponent,
     SelectedComponent,
+    SelectionComponent,
+    SelectionToolComponent,
     SizeComponent,
 } from '../components';
-import {SelectionGraphics, StickerGraphics} from '../graphics';
-import {MouseSystem} from './mouse.system';
+import {
+    SelectionGraphics,
+    SelectionToolGraphics,
+    StickerGraphics,
+} from '../graphics';
 import {SignalConnections} from 'typed-signals';
-import {EventBusService, ICreateEntity} from '../services';
+import {EventBusService, ICreateEntity, PixiService} from '../services';
 
 @Service()
 export class EntityCreatorSystem extends EntitySystem {
     @Inject()
-    private readonly mouseSystem!: MouseSystem;
+    private readonly eventBus!: EventBusService;
 
     @Inject()
-    private readonly eventBus!: EventBusService;
+    private readonly pixiService!: PixiService;
 
     private readonly connections = new SignalConnections();
 
@@ -39,7 +45,9 @@ export class EntityCreatorSystem extends EntitySystem {
             const sticker = new Entity();
             this.engine.entities.add(sticker);
 
+            const graphics = new StickerGraphics(sticker.getId());
             sticker.add(new SelectableComponent());
+            sticker.add(new PhysicsComponent());
             sticker.add(
                 new PositionComponent(
                     options.position.x - blueprint.data.size.width / 2,
@@ -52,14 +60,24 @@ export class EntityCreatorSystem extends EntitySystem {
                     blueprint.data.size.height,
                 ),
             );
-            sticker.add(
-                new GraphicsComponent(new StickerGraphics(sticker.getId())),
-            );
+            sticker.add(new GraphicsComponent(graphics));
+
+            /**
+             * @todo I think it shouldn't be here. We have to process
+             *  all visual components in one place and when something was added
+             *  we have to add it into the stage
+             * I think I have to implement some sort of queue and process
+             *  all entered entities with graphics component
+             */
+            this.pixiService.getApplication().stage.addChild(graphics.visual);
         } else if (blueprint.name === 'selection') {
             const selection = new Entity();
             this.engine.entities.add(selection);
 
+            const graphics = new SelectionGraphics(selection.getId());
             selection.add(new SelectedComponent());
+            selection.add(new SelectionComponent());
+            selection.add(new SelectableComponent());
             selection.add(
                 new PositionComponent(options.position.x, options.position.y),
             );
@@ -69,9 +87,23 @@ export class EntityCreatorSystem extends EntitySystem {
                     blueprint.data.size.height,
                 ),
             );
-            selection.add(
-                new GraphicsComponent(new SelectionGraphics(selection.getId())),
+            selection.add(new GraphicsComponent(graphics));
+
+            this.pixiService.getApplication().stage.addChild(graphics.visual);
+        } else if (blueprint.name === 'selection_tool') {
+            const selectionTool = new Entity();
+            this.engine.entities.add(selectionTool);
+
+            const graphics = new SelectionToolGraphics(selectionTool.getId());
+            selectionTool.add(
+                new PositionComponent(options.position.x, options.position.y),
             );
+            selectionTool.add(new PhysicsComponent());
+            selectionTool.add(new SizeComponent(100, 100));
+            selectionTool.add(new SelectionToolComponent());
+            selectionTool.add(new GraphicsComponent(graphics));
+
+            this.pixiService.getApplication().stage.addChild(graphics.visual);
         } else {
             throw new Error(`Not supported blueprint: ${blueprint}`);
         }

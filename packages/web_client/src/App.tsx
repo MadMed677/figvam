@@ -4,6 +4,8 @@ import './App.css';
 import {Engine} from '@figvam/whiteboard';
 import * as PIXI from 'pixi.js';
 
+import {Footer} from './Footer';
+
 interface IApplicationProps {
     engine: Engine;
     graphics: PIXI.Application;
@@ -55,6 +57,7 @@ class App extends React.PureComponent<IApplicationProps> {
                         <span onClick={console.log}>FV</span>
                     </div>
                 </div>
+                <Footer />
             </div>
         );
     }

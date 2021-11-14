@@ -145,13 +145,8 @@ export class MouseSystem extends EntitySystem {
         }
 
         // We may select only Selectable entities
-        if (entity.get(SelectableComponent)) {
-            this.eventBusService.selectEntity.emit(entity, {
-                position: {
-                    x: e.data.global.x,
-                    y: e.data.global.y,
-                },
-            });
+        if (entity.has(SelectableComponent)) {
+            this.eventBusService.selectEntity.emit(entity);
 
             return;
         }

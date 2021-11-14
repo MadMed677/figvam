@@ -17,6 +17,7 @@ export class EntityDeselectorSystem extends EntitySystem {
     private readonly connections = new SignalConnections();
     private entities: Entity[] = [];
     private deselectObjects = false;
+    private deselectionObjectsQueue: Entity[] = [];
 
     protected override onEnable(): void {
         this.entities = this.engine.entities.forFamily(
@@ -33,7 +34,10 @@ export class EntityDeselectorSystem extends EntitySystem {
          *  signal
          */
         this.connections.add(
-            this.eventBusService.removeSelection.connect(this.deselect),
+            this.eventBusService.removeSelection.connect(this.deselectAll),
+        );
+        this.connections.add(
+            this.eventBusService.deselectEntity.connect(this.deselectOne),
         );
     }
 
@@ -43,19 +47,35 @@ export class EntityDeselectorSystem extends EntitySystem {
         this.connections.disconnectAll();
     }
 
-    private deselect = (): void => {
+    private deselectAll = (): void => {
         this.deselectObjects = true;
     };
 
+    private deselectOne = (entity: Entity): void => {
+        this.deselectionObjectsQueue.push(entity);
+    };
+
     update(): void {
-        if (!this.deselectObjects) {
+        /** If we want to deselect all entities */
+        if (this.deselectObjects) {
+            for (const entity of this.entities) {
+                entity.remove(SelectedComponent);
+            }
+
+            this.deselectObjects = false;
+
             return;
         }
 
-        for (const entity of this.entities) {
-            entity.remove(SelectedComponent);
-        }
+        /** If we want to deselect only specifics objects */
+        if (this.deselectionObjectsQueue.length) {
+            for (const entity of this.deselectionObjectsQueue) {
+                entity.remove(SelectedComponent);
+            }
 
-        this.deselectObjects = false;
+            this.deselectionObjectsQueue = [];
+
+            return;
+        }
     }
 }

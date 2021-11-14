@@ -1,4 +1,9 @@
-import {Entity, EntitySystem, Family} from 'typed-ecstasy';
+import {
+    ComponentConstructor,
+    Entity,
+    EntitySystem,
+    Family,
+} from 'typed-ecstasy';
 import {EventBusService} from '../services';
 import {Inject, Service} from 'typedi';
 import {SignalConnections} from 'typed-signals';
@@ -20,6 +25,11 @@ export class EntityDestroyerSystem extends EntitySystem {
         this.connections.add(
             this.eventBus.destroyEntity.connect(this.destroyEntity.bind(this)),
         );
+        this.connections.add(
+            this.eventBus.destroyEntityByComponents.connect(
+                this.destroyEntityByComponents.bind(this),
+            ),
+        );
     }
 
     protected override onDisable(): void {
@@ -29,20 +39,28 @@ export class EntityDestroyerSystem extends EntitySystem {
     }
 
     private destroyEntity(entity: Entity): void {
-        const graphics = entity.get(GraphicsComponent);
-
-        if (!graphics) {
-            throw new Error(
-                `Entity must have GraphicsComponent. By entity by id: ${entity.getId()} does not have it`,
-            );
-        }
-
-        /** Destroy visual */
-        graphics.visual.destroy?.();
-
-        this.engine.entities.remove(entity);
+        entity.add(new DestroyedComponent());
     }
 
+    private destroyEntityByComponents(
+        components: ComponentConstructor[],
+    ): void {
+        /** Try to match all entities which contain all `components` */
+        const entities = this.engine.entities.forFamily(
+            Family.all(...components).get(),
+        );
+
+        /** Add `DestroyedComponent` to remove this entity on next tick */
+        entities.forEach(entity => {
+            entity.add(new DestroyedComponent());
+        });
+    }
+
+    /**
+     * Process all entities which has `DestroyedComponent`
+     *  and remove GraphicsComponent if they have
+     *  and remove them from the engine
+     */
     update(): void {
         for (const entity of this.entities) {
             const graphics = entity.get(GraphicsComponent);
