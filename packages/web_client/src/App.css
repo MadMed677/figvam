@@ -3,7 +3,7 @@
   --background-color--primary: #ECF0F1;
   --background-color--accent: #F39C12;
 
-  --shadow-color--default: #FFF;
+  --shadow-color--default: 44, 62, 80;
 
   --text-color--default: #000;
   --text-color--primary: #F1C40F;
@@ -16,7 +16,7 @@
     --background-color--primary: #34495E;
     --background-color--accent: #F39C12;
 
-    --shadow-color--default: #fff;
+    --shadow-color--default: 236, 240, 241;
 
     --text-color--default: #fff;
     --text-color--primary: #fff;
@@ -38,6 +38,7 @@
   justify-content: space-between;
   flex-direction: row;
   background-color: var(--background-color--default);
+  box-shadow: 0 0px 22px 0px rgba(var(--shadow-color--default), .4);
 }
 
 .app-header__menu-button {

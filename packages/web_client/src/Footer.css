@@ -20,7 +20,8 @@
 	flex-shrink: 1;
 	flex-basis: auto;
 	min-width: 0;
-	box-shadow: 0 0 0 1px rgb(var(--shadow-color--default) / 10%), 0 3px 16px rgb(var(--shadow-color--default) / 8%), 0 2px 6px 1px rgb(var(--shadow-color--default) / 9%);
+	/*box-shadow: 0 0 0 1px rgb(var(--shadow-color--default) / 10%), 0 3px 16px rgb(var(--shadow-color--default) / 8%), 0 2px 6px 1px rgb(var(--shadow-color--default) / 9%);*/
+	box-shadow: 0 0 10px 1px rgba(var(--shadow-color--default), 0.1), 0 3px 16px rgba(var(--shadow-color--default), .1), 0 2px 6px 1px rgba(var(--shadow-color--default), .1);
 	border-radius: 5px;
 	overflow: hidden;
 	background-color: var(--background-color--primary);
