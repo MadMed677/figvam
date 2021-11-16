@@ -24,12 +24,16 @@ import {CanvasBackgroundGraphics, StickerGraphics} from './graphics';
 import {Engine} from 'typed-ecstasy';
 import {PixiService} from './services';
 import {EntityDestroyerSystem} from './systems/entity_destroyer.system';
+import {FigvamApi} from './core/api/figvam.api';
 
 export {Engine} from 'typed-ecstasy';
+export {FigvamApi};
+export type {InteractionMode} from './core/api/interaction';
 
 interface IFigvamFactoryCreate {
     engine: Engine;
     graphics: PIXI.Application;
+    api: FigvamApi;
 }
 
 /**
@@ -92,10 +96,12 @@ export class FigvamFactory {
 
         const container = engine.getContainer();
         const pixiService = container.get(PixiService);
+        const figvamApi = container.get(FigvamApi);
 
         return {
             engine: engine,
             graphics: pixiService.getApplication(),
+            api: figvamApi,
         };
     }
 }

@@ -8,6 +8,13 @@ import {
     SelectedComponent,
     SpawnableComponent,
 } from '../components';
+import {FigvamApi} from '../core/api/figvam.api';
+
+import {
+    CreationSubType,
+    InteractionTypes,
+    SelectionSubType,
+} from '../core/api/interaction';
 
 @Service()
 export class MouseSystem extends EntitySystem {
@@ -30,6 +37,9 @@ export class MouseSystem extends EntitySystem {
 
     @Inject()
     private readonly eventBusService!: EventBusService;
+
+    @Inject()
+    private readonly figvamApi!: FigvamApi;
 
     constructor(pixiService: PixiService) {
         super();
@@ -120,11 +130,22 @@ export class MouseSystem extends EntitySystem {
     }
 
     private onClickStart(e: PIXI.InteractionEvent, entity: Entity) {
+        const interactionMode = this.figvamApi.interaction.getMode();
+
+        if (
+            interactionMode.type === InteractionTypes.Selection &&
+            interactionMode.subType === SelectionSubType.Hand
+        ) {
+            return;
+        }
+
         /** Trigger an event to remove selection */
         this.eventBusService.removeSelection.emit();
 
-        // We may spawn entities only by clicking on Spawnable entities
-        if (entity.get(SpawnableComponent)) {
+        if (
+            interactionMode.type === InteractionTypes.Creation &&
+            interactionMode.subType === CreationSubType.Sticker
+        ) {
             this.eventBusService.createEntity.emit({
                 blueprint: {
                     name: 'sticker',
@@ -141,6 +162,11 @@ export class MouseSystem extends EntitySystem {
                 },
             });
 
+            return;
+        }
+
+        // We may spawn entities only by clicking on Spawnable entities
+        if (entity.get(SpawnableComponent)) {
             return;
         }
 

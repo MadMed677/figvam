@@ -1,10 +1,12 @@
 import React from 'react';
 import classNames from 'classnames';
 
+import {SelectionSubType, CreationSubType} from '@figvam/whiteboard/types';
+
 interface IToolbarSelectionItemProps {
-    type: 'hand' | 'cursor';
+    type: SelectionSubType;
     active: boolean;
-    onClick: (type: 'hand' | 'cursor') => void;
+    onClick: (type: SelectionSubType) => void;
 }
 
 export const ToolbarSelectionItem: React.FC<IToolbarSelectionItemProps> =
@@ -48,9 +50,9 @@ export const ToolbarSelectionItem: React.FC<IToolbarSelectionItemProps> =
     );
 
 interface IToolbarCreationItemProps {
-    type: 'sticker' | 'shape';
+    type: CreationSubType;
     active: boolean;
-    onClick: (type: 'sticker' | 'shape') => void;
+    onClick: (type: CreationSubType) => void;
 }
 
 export const ToolbarCreationItem: React.FC<IToolbarCreationItemProps> =

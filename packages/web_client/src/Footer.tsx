@@ -1,117 +1,34 @@
 import React from 'react';
 import './Footer.css';
+import {
+    ICreationMode,
+    InteractionTypes,
+    ISelectionMode,
+} from '@figvam/whiteboard/types';
 
-import {ToolbarSelectionItem, ToolbarCreationItem} from './components';
+import {ToolbarCreationItem, ToolbarSelectionItem} from './components';
+import {CreationItem, SelectionItem} from './types/toolbar.types';
 
-/** Canvas Interaction */
-interface SelectionItem {
-    /**
-     * Interaction type. It might be
-     *  - hand - canvas navigation. All clicks by whiteboard will be avoided except moving
-     *  - cursor - default mode. Clicks will be transmitted to Canvas
-     */
-    type: 'hand' | 'cursor';
+type IClick = ICreationMode | ISelectionMode;
 
-    /** Is current item active or not */
-    active: boolean;
-}
-
-/** Canvas Creation */
-interface CreationItem {
-    /**
-     * Creating type. It might be
-     *  - sticker - create `sticker` entity on whiteboard
-     *  - shape - Not supported yet
-     */
-    type: 'sticker' | 'shape';
-
-    /** Is current item active or not */
-    active: boolean;
-}
-
-interface IFooterProps {}
-interface IFooterState {
+interface IFooterProps {
+    onClick(data: IClick): void;
     selectionItems: Array<SelectionItem>;
     creationItems: Array<CreationItem>;
 }
 
-export class Footer extends React.PureComponent<IFooterProps, IFooterState> {
-    constructor(props: IFooterProps) {
-        super(props);
-
-        this.state = {
-            selectionItems: [
-                {
-                    type: 'cursor',
-                    active: true,
-                },
-                {
-                    type: 'hand',
-                    active: false,
-                },
-            ],
-            creationItems: [
-                {
-                    type: 'sticker',
-                    active: false,
-                },
-                {
-                    type: 'shape',
-                    active: false,
-                },
-            ],
-        };
-    }
-
-    private onSelectionItemClicked = (type: 'cursor' | 'hand'): void => {
-        const updatedSelectionItems = this.state.selectionItems.map(item => {
-            if (type !== item.type) {
-                return {
-                    ...item,
-                    active: false,
-                };
-            }
-
-            return {
-                ...item,
-                active: true,
-            };
-        });
-
-        const updatedCreationItems = this.state.creationItems.map(item => ({
-            ...item,
-            active: false,
-        }));
-
-        this.setState({
-            selectionItems: updatedSelectionItems,
-            creationItems: updatedCreationItems,
+export class Footer extends React.PureComponent<IFooterProps> {
+    private onSelectionClick = (item: SelectionItem['type']): void => {
+        this.props.onClick({
+            type: InteractionTypes.Selection,
+            subType: item,
         });
     };
 
-    private onCreationItemClicked = (type: 'shape' | 'sticker'): void => {
-        const updatedSelectionItems = this.state.selectionItems.map(item => ({
-            ...item,
-            active: false,
-        }));
-
-        const updatedCreationItems = this.state.creationItems.map(item => {
-            if (type !== item.type) {
-                return {
-                    ...item,
-                    active: false,
-                };
-            }
-
-            return {
-                ...item,
-                active: true,
-            };
-        });
-
-        this.setState({
-            creationItems: updatedCreationItems,
-            selectionItems: updatedSelectionItems,
+    private onCreationClick = (item: CreationItem['type']): void => {
+        this.props.onClick({
+            type: InteractionTypes.Creation,
+            subType: item,
         });
     };
 
@@ -120,22 +37,22 @@ export class Footer extends React.PureComponent<IFooterProps, IFooterState> {
             <div className="app-footer">
                 <div className="app-footer__toolbar">
                     <div className="app-footer__toolbar--vertical-holder">
-                        {this.state.selectionItems.map(item => (
+                        {this.props.selectionItems.map(item => (
                             <ToolbarSelectionItem
                                 key={item.type}
                                 type={item.type}
-                                onClick={this.onSelectionItemClicked}
+                                onClick={this.onSelectionClick}
                                 active={item.active}
                             />
                         ))}
                     </div>
                     <div className="app-footer__divider" />
                     <div className="app-footer__toolbar--horizontal-holder">
-                        {this.state.creationItems.map(item => (
+                        {this.props.creationItems.map(item => (
                             <ToolbarCreationItem
                                 key={item.type}
                                 type={item.type}
-                                onClick={this.onCreationItemClicked}
+                                onClick={this.onCreationClick}
                                 active={item.active}
                             />
                         ))}
