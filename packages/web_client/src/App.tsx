@@ -67,7 +67,7 @@ class App extends React.PureComponent<IApplicationProps, IApplicationState> {
         this.props.api.interaction.setMode(interactionMode);
     };
 
-    private onSelectionItemClicked = (type: 'cursor' | 'hand'): void => {
+    private onSelectionItemClicked = (type: SelectionSubType): void => {
         const updatedSelectionItems = this.state.selectionItems.map(item => {
             if (type !== item.type) {
                 return {
@@ -78,10 +78,7 @@ class App extends React.PureComponent<IApplicationProps, IApplicationState> {
 
             this.props.api.interaction.setMode({
                 type: InteractionTypes.Selection,
-                subType:
-                    type === 'hand'
-                        ? SelectionSubType.Hand
-                        : SelectionSubType.Cursor,
+                subType: type,
             });
 
             return {
@@ -101,7 +98,7 @@ class App extends React.PureComponent<IApplicationProps, IApplicationState> {
         });
     };
 
-    private onCreationItemClicked = (type: 'shape' | 'sticker'): void => {
+    private onCreationItemClicked = (type: CreationSubType): void => {
         const updatedSelectionItems = this.state.selectionItems.map(item => ({
             ...item,
             active: false,
@@ -117,10 +114,7 @@ class App extends React.PureComponent<IApplicationProps, IApplicationState> {
 
             this.props.api.interaction.setMode({
                 type: InteractionTypes.Creation,
-                subType:
-                    type === 'sticker'
-                        ? CreationSubType.Sticker
-                        : CreationSubType.Shape,
+                subType: type,
             });
 
             return {
@@ -166,22 +160,22 @@ class App extends React.PureComponent<IApplicationProps, IApplicationState> {
     private initShortcuts = (): void => {
         /** Select selection tool */
         Keyboard.bind('v', e => {
-            this.onSelectionItemClicked('cursor');
+            this.onSelectionItemClicked(SelectionSubType.Cursor);
         });
 
         /** Select hard tool */
         Keyboard.bind('h', e => {
-            this.onSelectionItemClicked('hand');
+            this.onSelectionItemClicked(SelectionSubType.Hand);
         });
 
         /** Select Sticker Note tool */
         Keyboard.bind('n', e => {
-            this.onCreationItemClicked('sticker');
+            this.onCreationItemClicked(CreationSubType.Sticker);
         });
 
         /** Select Shape tool */
         Keyboard.bind('s', e => {
-            this.onCreationItemClicked('shape');
+            this.onCreationItemClicked(CreationSubType.Shape);
         });
     };
 
@@ -204,7 +198,7 @@ class App extends React.PureComponent<IApplicationProps, IApplicationState> {
                     creationItems={this.state.creationItems}
                     selectionItems={this.state.selectionItems}
                     onClick={data => {
-                        if (data.type === 'selection') {
+                        if (data.type === InteractionTypes.Selection) {
                             this.onSelectionItemClicked(data.subType);
                         } else {
                             this.onCreationItemClicked(data.subType);

@@ -10,6 +10,8 @@ import {
 } from '../components';
 import {FigvamApi} from '../core/api/figvam.api';
 
+import {StickerGraphics} from '../graphics';
+
 import {
     CreationSubType,
     InteractionTypes,
@@ -132,6 +134,7 @@ export class MouseSystem extends EntitySystem {
     private onClickStart(e: PIXI.InteractionEvent, entity: Entity) {
         const interactionMode = this.figvamApi.interaction.getMode();
 
+        /** @todo All interaction handling must be in a different handler */
         if (
             interactionMode.type === InteractionTypes.Selection &&
             interactionMode.subType === SelectionSubType.Hand
@@ -146,6 +149,10 @@ export class MouseSystem extends EntitySystem {
             interactionMode.type === InteractionTypes.Creation &&
             interactionMode.subType === CreationSubType.Sticker
         ) {
+            /**
+             * We definitely should create entity via Factory
+             * As an example: https://lusito.github.io/typed-ecstasy/guide/data-driven/components.html
+             */
             this.eventBusService.createEntity.emit({
                 blueprint: {
                     name: 'sticker',
@@ -155,6 +162,7 @@ export class MouseSystem extends EntitySystem {
                             height: 100,
                         },
                     },
+                    graphics: StickerGraphics,
                 },
                 position: {
                     x: e.data.global.x,
@@ -162,11 +170,6 @@ export class MouseSystem extends EntitySystem {
                 },
             });
 
-            return;
-        }
-
-        // We may spawn entities only by clicking on Spawnable entities
-        if (entity.get(SpawnableComponent)) {
             return;
         }
 
