@@ -70,29 +70,36 @@ export interface ISelectionTool {
 
 @Service()
 export class EventBusService {
-    /** An event that triggers the creating of a new entity */
-    public readonly createEntity = new Signal<
-        (options: ICreateEntity) => void
-    >();
+    /** All operations on Entities */
+    public readonly entities = {
+        /** An event that triggers the creating of a new entity */
+        create: new Signal<(options: ICreateEntity) => void>(),
 
-    /** An event that triggers the destroying an entity */
-    public readonly destroyEntity = new Signal<(entity: Entity) => void>();
+        /** An event that triggers the destroying an entity */
+        destroy: new Signal<(entity: Entity) => void>(),
 
-    /** An event that triggers the destroying an entity by list of components */
-    public readonly destroyEntityByComponents = new Signal<
-        (components: ComponentConstructor[]) => void
-    >();
+        /** An event that triggers the destroying an entity by list of components */
+        destroyByComponents: new Signal<
+            (components: ComponentConstructor[]) => void
+        >(),
 
-    /** An event which triggers to select an entity */
-    public readonly selectEntity = new Signal<(entity: Entity) => void>();
+        /** An event which triggers to select an entity */
+        select: new Signal<(entity: Entity) => void>(),
 
-    /** An event which triggers to deselect an entity */
-    public readonly deselectEntity = new Signal<(entity: Entity) => void>();
+        /** An event which triggers to deselect an entity */
+        deselect: new Signal<(entity: Entity) => void>(),
 
-    /** An event which triggers move entities */
-    public readonly moveEntities = new Signal<
-        (entities: Entity[], options: IMoveEntities) => void
-    >();
+        /** An event which triggers to change position of an entities */
+        move: new Signal<
+            (entities: Entity[], options: IMoveEntities) => void
+        >(),
+    };
+
+    /** All operations on Graphics */
+    public readonly graphics = {
+        /** An event that triggers to assign Graphics into the Scene */
+        addToScene: new Signal<(graphics: IGraphics<unknown>) => void>(),
+    };
 
     /** An event which triggers to show selection tool */
     public readonly showSelectionTool = new Signal<

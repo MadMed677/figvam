@@ -153,7 +153,7 @@ export class MouseSystem extends EntitySystem {
              * We definitely should create entity via Factory
              * As an example: https://lusito.github.io/typed-ecstasy/guide/data-driven/components.html
              */
-            this.eventBusService.createEntity.emit({
+            this.eventBusService.entities.create.emit({
                 blueprint: {
                     name: 'sticker',
                     data: {
@@ -175,7 +175,7 @@ export class MouseSystem extends EntitySystem {
 
         // We may select only Selectable entities
         if (entity.has(SelectableComponent)) {
-            this.eventBusService.selectEntity.emit(entity);
+            this.eventBusService.entities.select.emit(entity);
 
             return;
         }
@@ -207,7 +207,7 @@ export class MouseSystem extends EntitySystem {
                 this.eventBusService.removeSelection.emit();
 
                 /** Trigger to move entities */
-                this.eventBusService.moveEntities.emit([entity], {
+                this.eventBusService.entities.move.emit([entity], {
                     position: {
                         dx: e.data.global.x - this.startDragCoords.x,
                         dy: e.data.global.y - this.startDragCoords.y,
@@ -218,7 +218,7 @@ export class MouseSystem extends EntitySystem {
                     Family.all(SelectedComponent).get(),
                 );
 
-                this.eventBusService.moveEntities.emit(entities, {
+                this.eventBusService.entities.move.emit(entities, {
                     position: {
                         dx: e.data.global.x - this.startDragCoords.x,
                         dy: e.data.global.y - this.startDragCoords.y,

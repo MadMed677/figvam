@@ -37,7 +37,7 @@ export class EntityDeselectorSystem extends EntitySystem {
             this.eventBusService.removeSelection.connect(this.deselectAll),
         );
         this.connections.add(
-            this.eventBusService.deselectEntity.connect(this.deselectOne),
+            this.eventBusService.entities.deselect.connect(this.deselectOne),
         );
     }
 

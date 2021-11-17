@@ -23,10 +23,12 @@ export class EntityDestroyerSystem extends EntitySystem {
         );
 
         this.connections.add(
-            this.eventBus.destroyEntity.connect(this.destroyEntity.bind(this)),
+            this.eventBus.entities.destroy.connect(
+                this.destroyEntity.bind(this),
+            ),
         );
         this.connections.add(
-            this.eventBus.destroyEntityByComponents.connect(
+            this.eventBus.entities.destroyByComponents.connect(
                 this.destroyEntityByComponents.bind(this),
             ),
         );

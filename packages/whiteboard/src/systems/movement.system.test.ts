@@ -13,7 +13,7 @@ describe('MovementSystem', () => {
             .build();
 
         const eventBus = engine.getContainer().get(EventBusService);
-        eventBus.moveEntities.emit(engine.entities.getAll(), {
+        eventBus.entities.move.emit(engine.entities.getAll(), {
             position: {
                 dx: 10,
                 dy: 20,

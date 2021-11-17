@@ -31,7 +31,7 @@ export class EntitySelectorSystem extends EntitySystem {
         );
 
         this.connections.add(
-            this.eventBusService.selectEntity.connect(
+            this.eventBusService.entities.select.connect(
                 this.selectEntity.bind(this),
             ),
         );
@@ -57,7 +57,7 @@ export class EntitySelectorSystem extends EntitySystem {
         switch (options.state) {
             case 'start': {
                 this.eventBusService.removeSelection.emit();
-                this.eventBusService.createEntity.emit({
+                this.eventBusService.entities.create.emit({
                     blueprint: {
                         name: 'selection_tool',
                         data: {
@@ -93,7 +93,7 @@ export class EntitySelectorSystem extends EntitySystem {
 
             case 'end': {
                 // Removing SelectionCreationTool
-                this.eventBusService.destroyEntityByComponents.emit([
+                this.eventBusService.entities.destroyByComponents.emit([
                     SelectionToolComponent,
                 ]);
             }
