@@ -8,6 +8,7 @@ import {
 } from '../components';
 import {EventBusService, ISelectionTool} from '../services';
 import {SignalConnections} from 'typed-signals';
+import {SelectionToolGraphics} from '../graphics';
 
 @Service()
 export class EntitySelectorSystem extends EntitySystem {
@@ -65,6 +66,7 @@ export class EntitySelectorSystem extends EntitySystem {
                                 height: 0,
                             },
                         },
+                        graphics: SelectionToolGraphics,
                     },
                     position: {
                         x: options.position.x,

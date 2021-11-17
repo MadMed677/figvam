@@ -8,6 +8,7 @@ import {
 } from '../components';
 import {EventBusService} from '../services';
 import {SignalConnections} from 'typed-signals';
+import {SelectionGraphics} from '../graphics';
 
 @Service()
 export class EntitySelectionSystem extends EntitySystem {
@@ -85,6 +86,7 @@ export class EntitySelectionSystem extends EntitySystem {
                             height: 0,
                         },
                     },
+                    graphics: SelectionGraphics,
                 },
             });
 

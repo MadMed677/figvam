@@ -1,6 +1,7 @@
 import {Service} from 'typedi';
 import {Signal} from 'typed-signals';
 import {Entity, ComponentConstructor} from 'typed-ecstasy';
+import {IGraphics, GraphicsConstructor} from '../graphics';
 
 interface IStickerData {
     name: 'sticker';
@@ -10,6 +11,7 @@ interface IStickerData {
             height: number;
         };
     };
+    graphics: GraphicsConstructor<IGraphics<unknown>>;
 }
 
 interface ISelectionToolData {
@@ -20,6 +22,7 @@ interface ISelectionToolData {
             height: number;
         };
     };
+    graphics: GraphicsConstructor<IGraphics<unknown>>;
 }
 
 interface ISelectionCreationToolData {
@@ -30,6 +33,7 @@ interface ISelectionCreationToolData {
             height: number;
         };
     };
+    graphics: GraphicsConstructor<IGraphics<unknown>>;
 }
 
 type IData = IStickerData | ISelectionToolData | ISelectionCreationToolData;

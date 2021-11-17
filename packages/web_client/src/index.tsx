@@ -18,6 +18,7 @@ ReactDOM.render(
         <App
             engine={figvamWhiteboard.engine}
             graphics={figvamWhiteboard.graphics}
+            api={figvamWhiteboard.api}
         />
     </React.StrictMode>,
     document.getElementById('root'),

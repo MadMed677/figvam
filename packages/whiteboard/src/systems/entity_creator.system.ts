@@ -10,11 +10,6 @@ import {
     SelectionToolComponent,
     SizeComponent,
 } from '../components';
-import {
-    SelectionGraphics,
-    SelectionToolGraphics,
-    StickerGraphics,
-} from '../graphics';
 import {SignalConnections} from 'typed-signals';
 import {EventBusService, ICreateEntity, PixiService} from '../services';
 
@@ -45,7 +40,7 @@ export class EntityCreatorSystem extends EntitySystem {
             const sticker = new Entity();
             this.engine.entities.add(sticker);
 
-            const graphics = new StickerGraphics(sticker.getId());
+            const graphics = new blueprint.graphics(sticker.getId());
             sticker.add(new SelectableComponent());
             sticker.add(new PhysicsComponent());
             sticker.add(
@@ -74,7 +69,7 @@ export class EntityCreatorSystem extends EntitySystem {
             const selection = new Entity();
             this.engine.entities.add(selection);
 
-            const graphics = new SelectionGraphics(selection.getId());
+            const graphics = new blueprint.graphics(selection.getId());
             selection.add(new SelectedComponent());
             selection.add(new SelectionComponent());
             selection.add(new SelectableComponent());
@@ -94,7 +89,7 @@ export class EntityCreatorSystem extends EntitySystem {
             const selectionTool = new Entity();
             this.engine.entities.add(selectionTool);
 
-            const graphics = new SelectionToolGraphics(selectionTool.getId());
+            const graphics = new blueprint.graphics(selectionTool.getId());
             selectionTool.add(
                 new PositionComponent(options.position.x, options.position.y),
             );
