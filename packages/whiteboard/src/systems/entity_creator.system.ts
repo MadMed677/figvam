@@ -18,14 +18,11 @@ export class EntityCreatorSystem extends EntitySystem {
     @Inject()
     private readonly eventBus!: EventBusService;
 
-    @Inject()
-    private readonly pixiService!: PixiService;
-
     private readonly connections = new SignalConnections();
 
     protected override onEnable(): void {
         this.connections.add(
-            this.eventBus.createEntity.connect(this.createEntity.bind(this)),
+            this.eventBus.entities.create.connect(this.createEntity.bind(this)),
         );
     }
 
@@ -64,7 +61,7 @@ export class EntityCreatorSystem extends EntitySystem {
              * I think I have to implement some sort of queue and process
              *  all entered entities with graphics component
              */
-            this.pixiService.getApplication().stage.addChild(graphics.visual);
+            this.eventBus.graphics.addToScene.emit(graphics);
         } else if (blueprint.name === 'selection') {
             const selection = new Entity();
             this.engine.entities.add(selection);
@@ -84,7 +81,7 @@ export class EntityCreatorSystem extends EntitySystem {
             );
             selection.add(new GraphicsComponent(graphics));
 
-            this.pixiService.getApplication().stage.addChild(graphics.visual);
+            this.eventBus.graphics.addToScene.emit(graphics);
         } else if (blueprint.name === 'selection_tool') {
             const selectionTool = new Entity();
             this.engine.entities.add(selectionTool);
@@ -98,7 +95,7 @@ export class EntityCreatorSystem extends EntitySystem {
             selectionTool.add(new SelectionToolComponent());
             selectionTool.add(new GraphicsComponent(graphics));
 
-            this.pixiService.getApplication().stage.addChild(graphics.visual);
+            this.eventBus.graphics.addToScene.emit(graphics);
         } else {
             throw new Error(`Not supported blueprint: ${blueprint}`);
         }

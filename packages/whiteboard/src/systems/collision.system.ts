@@ -76,9 +76,9 @@ export class CollisionSystem extends IteratingSystem {
             );
 
             if (collided) {
-                this.eventBus.selectEntity.emit(entity);
+                this.eventBus.entities.select.emit(entity);
             } else {
-                this.eventBus.deselectEntity.emit(entity);
+                this.eventBus.entities.deselect.emit(entity);
             }
         }
     }

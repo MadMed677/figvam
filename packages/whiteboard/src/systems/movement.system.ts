@@ -13,7 +13,7 @@ export class MovementSystem extends EntitySystem {
 
     protected override onEnable(): void {
         this.connections.add(
-            this.eventBusService.moveEntities.connect(
+            this.eventBusService.entities.move.connect(
                 this.moveEntities.bind(this),
             ),
         );

@@ -41,7 +41,7 @@ export class EntitySelectionSystem extends EntitySystem {
     }
 
     private removeSelector(): void {
-        this.eventBus.destroyEntityByComponents.emit([SelectionComponent]);
+        this.eventBus.entities.destroyByComponents.emit([SelectionComponent]);
     }
 
     protected override onDisable(): void {
@@ -59,7 +59,7 @@ export class EntitySelectionSystem extends EntitySystem {
              *  "selection" entities we have to destroy them
              */
             if (this.selectionEntities.length) {
-                this.eventBus.destroyEntityByComponents.emit([
+                this.eventBus.entities.destroyByComponents.emit([
                     SelectionComponent,
                 ]);
             }
@@ -73,7 +73,7 @@ export class EntitySelectionSystem extends EntitySystem {
          *  create one and quick until next tick
          */
         if (this.selectionEntities.length === 0) {
-            this.eventBus.createEntity.emit({
+            this.eventBus.entities.create.emit({
                 position: {
                     x: 0,
                     y: 0,

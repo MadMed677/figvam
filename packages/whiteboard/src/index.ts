@@ -11,6 +11,7 @@ import {
     RenderSystem,
     CollisionSystem,
     EntitySelectionSystem,
+    GraphicsCreatorSystem,
 } from './systems';
 import {
     GraphicsComponent,
@@ -70,6 +71,7 @@ export class FigvamFactory {
             .withSystem(EntitySelectionSystem)
             .withSystem(EntityDestroyerSystem)
             .withSystem(CollisionSystem)
+            .withSystem(GraphicsCreatorSystem)
             .withSystem(RenderSystem)
             .withEntity(entity => {
                 entity.add(
