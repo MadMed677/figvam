@@ -2,15 +2,11 @@ import {Inject, Service} from 'typedi';
 import {Entity, EntitySystem, Family} from 'typed-ecstasy';
 
 import {SelectedComponent} from '../components';
-import {MouseSystem} from './mouse.system';
 import {EventBusService} from '../services';
 import {SignalConnections} from 'typed-signals';
 
 @Service()
 export class EntityDeselectorSystem extends EntitySystem {
-    @Inject()
-    mouseSystem!: MouseSystem;
-
     @Inject()
     eventBusService!: EventBusService;
 

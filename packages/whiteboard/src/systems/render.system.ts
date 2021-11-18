@@ -7,7 +7,7 @@ import {
     SelectedComponent,
     SizeComponent,
 } from '../components';
-import {PixiService, ThemeService} from '../services';
+import {ThemeService} from '../services';
 
 @Service()
 export class RenderSystem extends IteratingSystem {
@@ -20,9 +20,6 @@ export class RenderSystem extends IteratingSystem {
             ).get(),
         );
     }
-
-    @Inject()
-    private readonly pixiService!: PixiService;
 
     @Inject()
     private readonly themeService!: ThemeService;
@@ -50,9 +47,5 @@ export class RenderSystem extends IteratingSystem {
             graphics.visual.setProps(nextProps);
             graphics.visual.render();
         }
-
-        // this.pixiService
-        //     .getApplication()
-        //     .stage.addChild(graphics.visual.visual);
     }
 }
