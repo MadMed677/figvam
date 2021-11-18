@@ -64,15 +64,9 @@ export class MouseSystem extends EntitySystem {
     }
 
     protected override onDisable(): void {
-        this.interactionManager.removeListener(
-            'pointerdown',
-            this.onPointerDown,
-        );
-        this.interactionManager.removeListener('pointerup', this.onPointerUp);
-        this.interactionManager.removeListener(
-            'pointermove',
-            this.onPointerMove,
-        );
+        this.interactionManager.off('pointerdown', this.onPointerDown);
+        this.interactionManager.off('pointerup', this.onPointerUp);
+        this.interactionManager.off('pointermove', this.onPointerMove);
     }
 
     private onPointerDown(e: PIXI.InteractionEvent) {
