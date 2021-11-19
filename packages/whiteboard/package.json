@@ -1,7 +1,7 @@
 {
   "name": "@figvam/whiteboard",
   "version": "0.1.0",
-  "description": "",
+  "private": true,
   "main": "src/index.ts",
   "scripts": {
     "build": "webpack --env prod --mode production",

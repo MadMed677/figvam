@@ -5,8 +5,10 @@ const {
     addAfterLoader,
     throwUnexpectedConfigError,
 } = require('@craco/craco');
+const WasmPackPlugin = require('@wasm-tool/wasm-pack-plugin');
 
-const packages = [path.join(__dirname, '../whiteboard')];
+const typeScriptPackages = [path.join(__dirname, '../whiteboard')];
+const wasmPackages = [path.join(__dirname, '../whiteboard_engine_js')];
 
 const throwError = message =>
     throwUnexpectedConfigError({
@@ -34,7 +36,18 @@ module.exports = {
          *      More information about it: https://github.com/TypeStrong/ts-loader/issues/595#issuecomment-824240989
          */
         configure: (webpackConfig, {paths}) => {
-            /** Create TSLoader to add it for the packages */
+            webpackConfig.resolve.extensions.push('.wasm');
+            console.log('webpackConfig: ', webpackConfig.resolve.extensions);
+
+            /** Create WasmLoader to add it for the WASM packages */
+            const wasmLoader = {
+                test: /\.wasm$/,
+                include: paths.appSrc,
+                loader: require.resolve('wasm-loader'),
+                // options: {transpileOnly: true},
+            };
+
+            /** Create TSLoader to add it for the TypeScript packages */
             const tsLoader = {
                 test: /\.(js|mjs|jsx|ts|tsx)$/,
                 include: paths.appSrc,
@@ -49,20 +62,64 @@ module.exports = {
             );
             if (!tsLoaderIsAdded) throwError('failed to add ts-loader');
 
-            const {isFound, match} = getLoader(
+            const {isFound: isTsLoaderFound, match: tsLoadermatch} = getLoader(
                 webpackConfig,
                 loaderByName('ts-loader'),
             );
 
-            if (isFound) {
-                const include = Array.isArray(match.loader.include)
-                    ? match.loader.include
-                    : [match.loader.include];
+            /** Add an ability to work with WebAssembly. Not working in Webpack@4 */
+            // webpackConfig.experiments = {
+            //     asyncWebAssembly: true,
+            //     syncWebAssembly: true,
+            // };
 
-                match.loader.include = include.concat(packages);
+            if (isTsLoaderFound) {
+                const include = Array.isArray(tsLoadermatch.loader.include)
+                    ? tsLoadermatch.loader.include
+                    : [tsLoadermatch.loader.include];
+
+                tsLoadermatch.loader.include =
+                    include.concat(typeScriptPackages);
             }
+
+            const {isFound: isFileLoaderFound, match: fileLoadermatch} =
+                getLoader(webpackConfig, loaderByName('file-loader'));
+
+            if (isFileLoaderFound) {
+                fileLoadermatch.loader.exclude.push(/\.wasm$/);
+                console.log('fileLoaderMatcher: ', fileLoadermatch);
+            }
+
+            // const {isAdded: wasmLoaderIsAdded} = addAfterLoader(
+            //     webpackConfig,
+            //     loaderByName('file-loader'),
+            //     wasmLoader,
+            // );
+            // if (!wasmLoaderIsAdded) throwError('failed to add wasm-loader');
+
+            const {isFound: isWasmLoaderFound, match: wasmMatch} = getLoader(
+                webpackConfig,
+                loaderByName('wasm-loader'),
+            );
+
+            if (isWasmLoaderFound) {
+                const include = Array.isArray(wasmMatch.loader.include)
+                    ? wasmMatch.loader.include
+                    : [wasmMatch.loader.include];
+
+                wasmMatch.loader.include = include.concat(wasmPackages);
+                console.log('wasm match: ', wasmMatch.loader.include);
+            }
+
+            // console.log('webpackConfig: ', webpackConfig.module.rules[1].oneOf);
 
             return webpackConfig;
         },
+        plugins: [
+            new WasmPackPlugin({
+                crateDirectory: path.resolve(__dirname, '../whiteboard_engine'),
+                outDir: path.resolve(__dirname, '../whiteboard_engine/pkg'),
+            }),
+        ],
     },
 };

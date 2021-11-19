@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "description": "",
   "scripts": {
-    "start": "lerna run start",
+    "start": "lerna run start --stream",
     "prepare": "husky install",
     "build": "lerna run build",
     "lint": "lerna run lint",
