@@ -130,6 +130,10 @@ class App extends React.PureComponent<IApplicationProps, IApplicationState> {
     };
 
     componentDidMount() {
+        import('whiteboard_engine').then(module => {
+            console.log(module.greet());
+        });
+
         this.initShortcuts();
         this.props.graphics.ticker.add(this.tick);
 
@@ -159,22 +163,22 @@ class App extends React.PureComponent<IApplicationProps, IApplicationState> {
 
     private initShortcuts = (): void => {
         /** Select selection tool */
-        Keyboard.bind('v', e => {
+        Keyboard.bind('v', _ => {
             this.onSelectionItemClicked(SelectionSubType.Cursor);
         });
 
         /** Select hard tool */
-        Keyboard.bind('h', e => {
+        Keyboard.bind('h', _ => {
             this.onSelectionItemClicked(SelectionSubType.Hand);
         });
 
         /** Select Sticker Note tool */
-        Keyboard.bind('n', e => {
+        Keyboard.bind('n', _ => {
             this.onCreationItemClicked(CreationSubType.Sticker);
         });
 
         /** Select Shape tool */
-        Keyboard.bind('s', e => {
+        Keyboard.bind('s', _ => {
             this.onCreationItemClicked(CreationSubType.Shape);
         });
     };

@@ -8,7 +8,10 @@ const {
 const WasmPackPlugin = require('@wasm-tool/wasm-pack-plugin');
 
 const typeScriptPackages = [path.join(__dirname, '../whiteboard')];
-const wasmPackages = [path.join(__dirname, '../whiteboard_engine_js')];
+const wasmPackage = {
+    src: path.join(__dirname, '../whiteboard_engine'),
+    out: path.join(__dirname, '../whiteboard_engine/pkg'),
+};
 
 const throwError = message =>
     throwUnexpectedConfigError({
@@ -37,15 +40,6 @@ module.exports = {
          */
         configure: (webpackConfig, {paths}) => {
             webpackConfig.resolve.extensions.push('.wasm');
-            console.log('webpackConfig: ', webpackConfig.resolve.extensions);
-
-            /** Create WasmLoader to add it for the WASM packages */
-            const wasmLoader = {
-                test: /\.wasm$/,
-                include: paths.appSrc,
-                loader: require.resolve('wasm-loader'),
-                // options: {transpileOnly: true},
-            };
 
             /** Create TSLoader to add it for the TypeScript packages */
             const tsLoader = {
@@ -67,12 +61,6 @@ module.exports = {
                 loaderByName('ts-loader'),
             );
 
-            /** Add an ability to work with WebAssembly. Not working in Webpack@4 */
-            // webpackConfig.experiments = {
-            //     asyncWebAssembly: true,
-            //     syncWebAssembly: true,
-            // };
-
             if (isTsLoaderFound) {
                 const include = Array.isArray(tsLoadermatch.loader.include)
                     ? tsLoadermatch.loader.include
@@ -85,41 +73,27 @@ module.exports = {
             const {isFound: isFileLoaderFound, match: fileLoadermatch} =
                 getLoader(webpackConfig, loaderByName('file-loader'));
 
+            /** We have to make `file-loader` to ignore `wasm` files. Otherwise it'll crash */
             if (isFileLoaderFound) {
                 fileLoadermatch.loader.exclude.push(/\.wasm$/);
-                console.log('fileLoaderMatcher: ', fileLoadermatch);
             }
 
-            // const {isAdded: wasmLoaderIsAdded} = addAfterLoader(
-            //     webpackConfig,
-            //     loaderByName('file-loader'),
-            //     wasmLoader,
-            // );
-            // if (!wasmLoaderIsAdded) throwError('failed to add wasm-loader');
-
-            const {isFound: isWasmLoaderFound, match: wasmMatch} = getLoader(
-                webpackConfig,
-                loaderByName('wasm-loader'),
-            );
-
-            if (isWasmLoaderFound) {
-                const include = Array.isArray(wasmMatch.loader.include)
-                    ? wasmMatch.loader.include
-                    : [wasmMatch.loader.include];
-
-                wasmMatch.loader.include = include.concat(wasmPackages);
-                console.log('wasm match: ', wasmMatch.loader.include);
+            /**
+             * Add WasmPackPlugin only for Development mode
+             *  because for production mode we have
+             *  "wasm-pack build" which creates `pkg` folder
+             *  and we may use them
+             */
+            if (process.env.NODE_ENV === 'development') {
+                webpackConfig.plugins.push(
+                    new WasmPackPlugin({
+                        crateDirectory: wasmPackage.src,
+                        outDir: wasmPackage.out,
+                    }),
+                );
             }
-
-            // console.log('webpackConfig: ', webpackConfig.module.rules[1].oneOf);
 
             return webpackConfig;
         },
-        plugins: [
-            new WasmPackPlugin({
-                crateDirectory: path.resolve(__dirname, '../whiteboard_engine'),
-                outDir: path.resolve(__dirname, '../whiteboard_engine/pkg'),
-            }),
-        ],
     },
 };

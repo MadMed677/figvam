@@ -9,11 +9,6 @@ import reportWebVitals from './reportWebVitals';
 
 import {FigvamFactory} from '@figvam/whiteboard';
 
-import('whiteboard_engine').then(module => {
-    console.log('module', module);
-    module.greet();
-});
-
 const figvamWhiteboard = new FigvamFactory().create();
 
 window.engine = figvamWhiteboard.engine;
