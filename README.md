@@ -6,12 +6,26 @@
 how the products like `FigJam` / `Miro` works
 
 ## Development
-To start development you should call `npm run start` script.
-It will run 2 apps:
-- Whiteboard - only the canvas which will live on `localhost:9000`
-- Web Client - full canvas and UI which will live on `localhost:3000`
+- `npm install`
+- `npx lerna bootstrap`
+
+The app will live on `localhost:3000`
+
+## Production
+- `npm install`
+- `npx lerna bootstrap`
+- `cd packages/whiteboard_engine`
+- `wasm-pack build`
+- `cd ../../`
+- `npm run build`
 
 ## Tech. stack
-- PixiJS
-- ECS
-- Lerna
+### Frontend
+- PixiJS - Graphics
+- Typed-Ecstasy - Entity Component System engine (ECS)
+- Lerna - Monorepo
+- ReactJS
+
+### Engine
+- Rust
+- Web Assembly (Wasm)
