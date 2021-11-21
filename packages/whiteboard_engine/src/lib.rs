@@ -1,3 +1,4 @@
+mod engine;
 mod utils;
 
 use wasm_bindgen::prelude::*;
@@ -11,4 +12,9 @@ static ALLOC: wee_alloc::WeeAlloc = wee_alloc::WeeAlloc::INIT;
 #[wasm_bindgen]
 pub fn greet() -> String {
     "Hello, whiteboard-engine! With updates!".into()
+}
+
+#[wasm_bindgen]
+pub fn create_engine() {
+    let _ = engine::FigvamEngine::get_builder().with_entity();
 }

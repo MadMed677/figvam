@@ -131,7 +131,8 @@ class App extends React.PureComponent<IApplicationProps, IApplicationState> {
 
     componentDidMount() {
         import('whiteboard_engine').then(module => {
-            console.log(module.greet());
+            console.log(module);
+            module.create_engine();
         });
 
         this.initShortcuts();
