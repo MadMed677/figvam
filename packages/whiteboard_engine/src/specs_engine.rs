@@ -1,5 +1,4 @@
-use specs::{Builder, Component, System, VecStorage, World, WorldExt};
-use wasm_bindgen::prelude::*;
+use specs::{Builder, Component, VecStorage, World, WorldExt};
 
 #[derive(Component)]
 #[storage(VecStorage)]

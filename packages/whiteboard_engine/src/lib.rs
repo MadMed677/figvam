@@ -1,4 +1,5 @@
-mod engine;
+mod legion_engine;
+mod specs_engine;
 mod utils;
 
 use wasm_bindgen::prelude::*;
@@ -15,6 +16,13 @@ pub fn greet() -> String {
 }
 
 #[wasm_bindgen]
-pub fn create_engine() {
-    let _ = engine::FigvamEngine::get_builder().with_entity();
+pub fn create_specs_engine() {
+    let _ = specs_engine::FigvamEngine::get_builder().with_entity();
+}
+
+#[wasm_bindgen]
+pub fn create_legion_engine() -> legion_engine::FigvamEngineBuilder {
+    let engine = legion_engine::FigvamEngine::get_builder().with_entity();
+
+    engine
 }
