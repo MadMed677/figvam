@@ -132,13 +132,6 @@ class App extends React.PureComponent<IApplicationProps, IApplicationState> {
     componentDidMount() {
         import('whiteboard_engine').then(module => {
             console.log(module);
-            const entities = module
-                .create_legion_engine()
-                .with_entity()
-                .with_entity()
-                .with_entity()
-                .entities();
-            console.log('entities: ', entities);
         });
 
         this.initShortcuts();

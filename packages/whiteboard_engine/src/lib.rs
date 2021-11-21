@@ -1,5 +1,4 @@
 mod legion_engine;
-mod specs_engine;
 mod utils;
 
 use wasm_bindgen::prelude::*;
@@ -11,18 +10,16 @@ use wasm_bindgen::prelude::*;
 static ALLOC: wee_alloc::WeeAlloc = wee_alloc::WeeAlloc::INIT;
 
 #[wasm_bindgen]
-pub fn greet() -> String {
-    "Hello, whiteboard-engine! With updates!".into()
-}
+struct FigvamFactory {}
 
 #[wasm_bindgen]
-pub fn create_specs_engine() {
-    let _ = specs_engine::FigvamEngine::get_builder().with_entity();
-}
+impl FigvamFactory {
+    pub fn create() -> legion_engine::FigvamEngineCreator {
+        let engine = legion_engine::FigvamEngine::get_builder()
+            .with_entity()
+            .with_entity()
+            .build();
 
-#[wasm_bindgen]
-pub fn create_legion_engine() -> legion_engine::FigvamEngineBuilder {
-    let engine = legion_engine::FigvamEngine::get_builder().with_entity();
-
-    engine
+        engine
+    }
 }

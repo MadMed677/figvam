@@ -2,7 +2,6 @@ use legion::*;
 use serde::{Deserialize, Serialize};
 use wasm_bindgen::prelude::*;
 
-#[wasm_bindgen]
 #[derive(Clone, Copy, PartialEq, Serialize, Deserialize)]
 pub struct Position {
     x: f32,
@@ -21,8 +20,10 @@ pub struct FigvamEngineBuilder {
 }
 
 #[wasm_bindgen]
+pub struct FigvamEngineCreator {}
+
+#[wasm_bindgen]
 impl FigvamEngineBuilder {
-    #[wasm_bindgen(constructor)]
     pub fn new() -> Self {
         Self {
             world: World::default(),
@@ -44,6 +45,10 @@ impl FigvamEngineBuilder {
         this
     }
 
+    pub fn build(self) -> FigvamEngineCreator {
+        FigvamEngineCreator {}
+    }
+
     pub fn entities(&self) -> JsValue {
         let mut query = <&Position>::query();
 
@@ -56,10 +61,8 @@ impl FigvamEngineBuilder {
     }
 }
 
-// #[wasm_bindgen]
 pub struct FigvamEngine {}
 
-// #[wasm_bindgen]
 impl FigvamEngine {
     pub fn get_builder() -> FigvamEngineBuilder {
         FigvamEngineBuilder::new()
