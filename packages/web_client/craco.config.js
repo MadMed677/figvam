@@ -5,8 +5,13 @@ const {
     addAfterLoader,
     throwUnexpectedConfigError,
 } = require('@craco/craco');
+const WasmPackPlugin = require('@wasm-tool/wasm-pack-plugin');
 
-const packages = [path.join(__dirname, '../whiteboard')];
+const typeScriptPackages = [path.join(__dirname, '../whiteboard')];
+const wasmPackage = {
+    src: path.join(__dirname, '../whiteboard_engine'),
+    out: path.join(__dirname, '../whiteboard_engine/pkg'),
+};
 
 const throwError = message =>
     throwUnexpectedConfigError({
@@ -34,7 +39,9 @@ module.exports = {
          *      More information about it: https://github.com/TypeStrong/ts-loader/issues/595#issuecomment-824240989
          */
         configure: (webpackConfig, {paths}) => {
-            /** Create TSLoader to add it for the packages */
+            webpackConfig.resolve.extensions.push('.wasm');
+
+            /** Create TSLoader to add it for the TypeScript packages */
             const tsLoader = {
                 test: /\.(js|mjs|jsx|ts|tsx)$/,
                 include: paths.appSrc,
@@ -49,17 +56,41 @@ module.exports = {
             );
             if (!tsLoaderIsAdded) throwError('failed to add ts-loader');
 
-            const {isFound, match} = getLoader(
+            const {isFound: isTsLoaderFound, match: tsLoadermatch} = getLoader(
                 webpackConfig,
                 loaderByName('ts-loader'),
             );
 
-            if (isFound) {
-                const include = Array.isArray(match.loader.include)
-                    ? match.loader.include
-                    : [match.loader.include];
+            if (isTsLoaderFound) {
+                const include = Array.isArray(tsLoadermatch.loader.include)
+                    ? tsLoadermatch.loader.include
+                    : [tsLoadermatch.loader.include];
 
-                match.loader.include = include.concat(packages);
+                tsLoadermatch.loader.include =
+                    include.concat(typeScriptPackages);
+            }
+
+            const {isFound: isFileLoaderFound, match: fileLoadermatch} =
+                getLoader(webpackConfig, loaderByName('file-loader'));
+
+            /** We have to make `file-loader` to ignore `wasm` files. Otherwise it'll crash */
+            if (isFileLoaderFound) {
+                fileLoadermatch.loader.exclude.push(/\.wasm$/);
+            }
+
+            /**
+             * Add WasmPackPlugin only for Development mode
+             *  because for production mode we have
+             *  "wasm-pack build" which creates `pkg` folder
+             *  and we may use them
+             */
+            if (process.env.NODE_ENV === 'development') {
+                webpackConfig.plugins.push(
+                    new WasmPackPlugin({
+                        crateDirectory: wasmPackage.src,
+                        outDir: wasmPackage.out,
+                    }),
+                );
             }
 
             return webpackConfig;

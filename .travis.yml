@@ -1,20 +1,76 @@
 language: node_js
-sudo: false
-node_js:
-    - 14
-cache:
-    directories:
-        - node_modules
-    npm: true
-install:
-    - npm install
-    - npx lerna bootstrap
+node_js: 16
+os: linux
+
 jobs:
     include:
-        - stage: release
+        # Testing and Linting
+        - stage: Test and Lint
+          # Test and Lint Whiteboard Engine on Rust
+          name: "Whiteboard Engine"
+          language: rust
+          rust: beta
+          env: RUST_BACKTRACE=1
+          cache:
+            cargo: true
+          addons:
+              firefox: latest
+              chrome: stable
+          before_install:
+            - cd packages/whiteboard_engine
+          before_script:
+            - curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh -s -- -f
           script:
-              - npm run build
+            - wasm-pack build
+            - wasm-pack test --chrome --firefox --headless
+            - cargo check
+            - cargo check --target wasm32-unknown-unknown
+
+          # Test and Lint Web Application / UI on TypeScript
+        - language: node_js
+          name: "Web Application"
+          node_js: 16
+          cache:
+              directories:
+                  - node_modules
+              npm: true
+          install:
+              - npm install
+              - npx lerna bootstrap
+          script:
               - npm run lint
               - npm run ci:test
           after_success:
               - bash <(curl -s https://codecov.io/bash)
+
+        # Building
+        - stage: Build
+          name: "Whiteboard Engine"
+          language: rust
+          rust: beta
+          env: RUST_BACKTRACE=1
+          cache:
+            cargo: true
+          before_install:
+            - cd packages/whiteboard_engine
+          before_script:
+            - curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh -s -- -f
+          script:
+            - wasm-pack build
+#        - language: node_js
+#          node_js: 16
+#          cache:
+#              directories:
+#                  - node_modules
+#              npm: true
+#          install:
+#              - npm install
+#              - npx lerna bootstrap
+#          script:
+#              @ TODO: After Rust build we have no access to the directory
+#                       and because of that we cannot build client app
+#              - npm run build
+#              - npm run lint
+#              - npm run ci:test
+#          after_success:
+#              - bash <(curl -s https://codecov.io/bash)
