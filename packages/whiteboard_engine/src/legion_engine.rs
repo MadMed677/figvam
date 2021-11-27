@@ -1,32 +1,32 @@
 use legion::*;
-use serde::{Deserialize, Serialize};
 use wasm_bindgen::prelude::*;
 
-#[derive(Clone, Copy, PartialEq, Serialize, Deserialize)]
-pub struct Position {
-    x: f32,
-    y: f32,
-}
+use crate::components::{
+    GraphicsComponent, PhysicsComponent, PositionComponent, SelectableComponent, SizeComponent,
+};
 
-#[derive(Clone, Copy, PartialEq)]
-pub struct Velocity {
-    dx: f32,
-    dy: f32,
-}
+#[system(for_each)]
+fn my_for_each(position: &PositionComponent, graphics: &GraphicsComponent) {}
 
 #[wasm_bindgen]
 pub struct FigvamEngineBuilder {
     world: World,
+    // schedule: legion::Schedule,
 }
 
 #[wasm_bindgen]
 pub struct FigvamEngineCreator {}
+
+pub trait IEntity {
+    fn position() -> (f32, f32);
+}
 
 #[wasm_bindgen]
 impl FigvamEngineBuilder {
     pub fn new() -> Self {
         Self {
             world: World::default(),
+            // schedule: Schedule::builder(),
         }
     }
 
@@ -35,12 +35,28 @@ impl FigvamEngineBuilder {
 
         // Creating new Entity
         this.world.push((
-            Position { x: 10.0, y: 20.0 },
-            Velocity {
-                dx: 100.0,
-                dy: 100.0,
+            SelectableComponent,
+            PhysicsComponent,
+            PositionComponent { x: 10.0, y: 20.0 },
+            SizeComponent {
+                width: 100,
+                height: 150,
             },
         ));
+
+        this
+    }
+
+    pub fn with_system(self) -> Self {
+        let mut this = self;
+
+        let mut schedule = Schedule::builder()
+            .add_system(my_for_each_system())
+            // .add_system(render_system_system())
+            .build();
+        let mut resources = Resources::default();
+
+        schedule.execute(&mut this.world, &mut resources);
 
         this
     }
@@ -50,7 +66,7 @@ impl FigvamEngineBuilder {
     }
 
     pub fn entities(&self) -> JsValue {
-        let mut query = <&Position>::query();
+        let mut query = <&PositionComponent>::query();
 
         let mut entities = Vec::new();
         for position in query.iter(&self.world) {

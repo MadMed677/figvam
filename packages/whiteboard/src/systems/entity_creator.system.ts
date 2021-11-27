@@ -11,7 +11,7 @@ import {
     SizeComponent,
 } from '../components';
 import {SignalConnections} from 'typed-signals';
-import {EventBusService, ICreateEntity} from '../services';
+import {EngineState, EventBusService, ICreateEntity} from '../services';
 
 @Service()
 export class EntityCreatorSystem extends EntitySystem {
@@ -19,6 +19,9 @@ export class EntityCreatorSystem extends EntitySystem {
     private readonly eventBus!: EventBusService;
 
     private readonly connections = new SignalConnections();
+
+    @Inject()
+    private readonly engineState!: EngineState;
 
     protected override onEnable(): void {
         this.connections.add(
@@ -37,7 +40,14 @@ export class EntityCreatorSystem extends EntitySystem {
             const sticker = new Entity();
             this.engine.entities.add(sticker);
 
-            const graphics = new blueprint.graphics(sticker.getId());
+            console.log('this.engineState: ', this.engineState);
+            const graphicsCreator = this.engineState.getGraphicsByName(blueprint.name)
+            if (!graphicsCreator) {
+                throw new Error(`Shouldn't find Graphics by name: ${blueprint.name}`)
+            }
+
+            const graphics = new graphicsCreator(sticker.getId())
+            // const graphics = new blueprint.graphics(sticker.getId());
             sticker.add(new SelectableComponent());
             sticker.add(new PhysicsComponent());
             sticker.add(

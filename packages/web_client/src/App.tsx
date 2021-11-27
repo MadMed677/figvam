@@ -132,6 +132,8 @@ class App extends React.PureComponent<IApplicationProps, IApplicationState> {
     componentDidMount() {
         import('whiteboard_engine').then(module => {
             console.log(module);
+            const figvamEngine = module.FigvamFactory.create()
+            console.log('figvamEngine: ', figvamEngine);
         });
 
         this.initShortcuts();

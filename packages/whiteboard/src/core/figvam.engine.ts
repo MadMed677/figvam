@@ -1,14 +1,21 @@
 import {Engine, Entity, EntitySystem, SystemConstructor} from 'typed-ecstasy';
-import {PixiService} from '../services';
+import {PixiService, EngineState} from '../services';
 import {GraphicsComponent} from '../components';
+import {GraphicsConstructor, IGraphics} from '../graphics';
 
 type PublicConstructor<T> = new () => T;
+
+interface IGraphicsData {
+    name: string
+    data: GraphicsConstructor<IGraphics<unknown>>
+}
 
 interface IEngineBuilder {
     withSystem<T extends EntitySystem>(
         system: SystemConstructor<T>,
     ): IEngineBuilder;
     withEntity(entityBuilder: (entity: Entity) => void): IEngineBuilder;
+    withGraphics(graphics: Array<IGraphicsData>): IEngineBuilder;
     build(): Engine;
 }
 
@@ -37,6 +44,19 @@ export class FigvamEngine {
                 this.engine.systems.add(system, this.systemOrder++);
 
                 return this;
+            }
+
+            public withGraphics(graphics: Array<IGraphicsData>): IEngineBuilder {
+                const container = this.engine.getContainer();
+                const engineState = container.get(EngineState)
+                const graphicsMap = new Map<string, GraphicsConstructor<IGraphics<unknown>>>()
+                graphics.forEach((gd) => {
+                    graphicsMap.set(gd.name, gd.data)
+                })
+
+                engineState.addGraphics(graphicsMap)
+
+                return this
             }
 
             public withEntity(

@@ -21,7 +21,7 @@ import {
     SizeComponent,
     SpawnableComponent,
 } from './components';
-import {CanvasBackgroundGraphics, StickerGraphics} from './graphics';
+import {CanvasBackgroundGraphics, IGraphics, StickerGraphics} from './graphics';
 import {Engine} from 'typed-ecstasy';
 import {PixiService} from './services';
 import {EntityDestroyerSystem} from './systems/entity_destroyer.system';
@@ -60,6 +60,14 @@ interface IFigvamFactoryCreate {
  * ```
  */
 export class FigvamFactory {
+    private graphics: Array<IGraphics<unknown>> = []
+
+    public withGraphics(graphics: Array<IGraphics<unknown>>): this {
+        this.graphics = graphics
+
+        return this
+    }
+
     /** Creates new engine and PIXI.Application */
     public create(): IFigvamFactoryCreate {
         const engine = FigvamEngine.getBuilder()
@@ -73,6 +81,10 @@ export class FigvamFactory {
             .withSystem(CollisionSystem)
             .withSystem(GraphicsCreatorSystem)
             .withSystem(RenderSystem)
+            .withGraphics([{
+                name: 'sticker',
+                data: StickerGraphics
+            }])
             .withEntity(entity => {
                 entity.add(
                     new GraphicsComponent(
