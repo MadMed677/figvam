@@ -6,7 +6,7 @@ use crate::components::{
 };
 
 #[system(for_each)]
-fn my_for_each(position: &PositionComponent, graphics: &GraphicsComponent) {}
+fn my_for_each(position: &PositionComponent, size: &SizeComponent) {}
 
 #[wasm_bindgen]
 pub struct FigvamEngineBuilder {
