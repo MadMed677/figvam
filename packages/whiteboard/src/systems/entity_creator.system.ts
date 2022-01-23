@@ -11,7 +11,7 @@ import {
     SizeComponent,
 } from '../components';
 import {SignalConnections} from 'typed-signals';
-import {EventBusService, ICreateEntity, PixiService} from '../services';
+import {EventBusService, ICreateEntity} from '../services';
 
 @Service()
 export class EntityCreatorSystem extends EntitySystem {

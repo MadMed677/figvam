@@ -73,27 +73,27 @@ export class FigvamFactory {
             .withSystem(CollisionSystem)
             .withSystem(GraphicsCreatorSystem)
             .withSystem(RenderSystem)
-            .withEntity(entity => {
-                entity.add(
-                    new GraphicsComponent(
-                        new CanvasBackgroundGraphics(entity.getId()),
-                    ),
-                );
-                entity.add(new PositionComponent(0, 0));
-                entity.add(
-                    new SizeComponent(window.innerWidth, window.innerHeight),
-                );
-                entity.add(new SpawnableComponent());
-            })
-            .withEntity(entity => {
-                entity.add(
-                    new GraphicsComponent(new StickerGraphics(entity.getId())),
-                );
-                entity.add(new SelectableComponent());
-                entity.add(new PhysicsComponent());
-                entity.add(new PositionComponent(200, 200));
-                entity.add(new SizeComponent(100, 100));
-            })
+            // .withEntity(entity => {
+            //     entity.add(
+            //         new GraphicsComponent(
+            //             new CanvasBackgroundGraphics(entity.getId()),
+            //         ),
+            //     );
+            //     entity.add(new PositionComponent(0, 0));
+            //     entity.add(
+            //         new SizeComponent(window.innerWidth, window.innerHeight),
+            //     );
+            //     entity.add(new SpawnableComponent());
+            // })
+            // .withEntity(entity => {
+            //     entity.add(
+            //         new GraphicsComponent(new StickerGraphics(entity.getId())),
+            //     );
+            //     entity.add(new SelectableComponent());
+            //     entity.add(new PhysicsComponent());
+            //     entity.add(new PositionComponent(200, 200));
+            //     entity.add(new SizeComponent(100, 100));
+            // })
             .build();
 
         const container = engine.getContainer();

@@ -43,9 +43,12 @@ export class MouseSystem extends EntitySystem {
     @Inject()
     private readonly figvamApi!: FigvamApi;
 
+    private readonly pixiService: PixiService;
+
     constructor(pixiService: PixiService) {
         super();
 
+        this.pixiService = pixiService;
         this.onPointerDown = this.onPointerDown.bind(this);
         this.onPointerUp = this.onPointerUp.bind(this);
         this.onPointerMove = this.onPointerMove.bind(this);
@@ -73,7 +76,7 @@ export class MouseSystem extends EntitySystem {
         this.pointerDown = true;
 
         const entityId = Number(e.target.name);
-        this.activeEntity = this.engine.entities.get(entityId)!;
+        this.activeEntity = this.engine.entities.get(entityId);
 
         this.longClickTimeout = window.setTimeout(() => {
             this.onLongClickStart(e);
@@ -93,10 +96,10 @@ export class MouseSystem extends EntitySystem {
             if (this.pointerMove) {
                 this.pointerMove = false;
 
-                this.onDragEnd(e, this.activeEntity!);
+                this.onDragEnd(e, this.activeEntity);
                 // Click
             } else {
-                this.onClickStart(e, this.activeEntity!);
+                this.onClickStart(e, this.activeEntity);
             }
         }
 
@@ -118,14 +121,14 @@ export class MouseSystem extends EntitySystem {
             if (!this.pointerMove) {
                 this.pointerMove = true;
 
-                this.onDragStart(e, this.activeEntity!);
+                this.onDragStart(e, this.activeEntity);
             } else {
-                this.onDragging(e, this.activeEntity!);
+                this.onDragging(e, this.activeEntity);
             }
         }
     }
 
-    private onClickStart(e: PIXI.InteractionEvent, entity: Entity) {
+    private onClickStart(e: PIXI.InteractionEvent, entity?: Entity) {
         const interactionMode = this.figvamApi.interaction.getMode();
 
         /** @todo All interaction handling must be in a different handler */
@@ -143,6 +146,7 @@ export class MouseSystem extends EntitySystem {
             interactionMode.type === InteractionTypes.Creation &&
             interactionMode.subType === CreationSubType.Sticker
         ) {
+            console.log('e: ', e);
             /**
              * We definitely should create entity via Factory
              * As an example: https://lusito.github.io/typed-ecstasy/guide/data-driven/components.html
@@ -161,6 +165,12 @@ export class MouseSystem extends EntitySystem {
                 position: {
                     x: e.data.global.x,
                     y: e.data.global.y,
+                    // x:
+                    //     e.data.global.x -
+                    //     this.pixiService.getViewportContainer().worldWidth / 2,
+                    // y:
+                    //     e.data.global.y -
+                    //     this.pixiService.getViewportContainer().worldHeight / 2,
                 },
             });
 
@@ -168,7 +178,7 @@ export class MouseSystem extends EntitySystem {
         }
 
         // We may select only Selectable entities
-        if (entity.has(SelectableComponent)) {
+        if (entity && entity.has(SelectableComponent)) {
             this.eventBusService.entities.select.emit(entity);
 
             return;
@@ -180,8 +190,8 @@ export class MouseSystem extends EntitySystem {
         y: 0,
     };
 
-    private onDragStart(e: PIXI.InteractionEvent, entity: Entity) {
-        if (entity.get(SpawnableComponent)) {
+    private onDragStart(e: PIXI.InteractionEvent, entity?: Entity) {
+        if (entity && entity.get(SpawnableComponent)) {
             this.eventBusService.showSelectionTool.emit({
                 state: 'start',
                 position: {
@@ -195,8 +205,8 @@ export class MouseSystem extends EntitySystem {
         this.startDragCoords.y = e.data.global.y;
     }
 
-    private onDragging(e: PIXI.InteractionEvent, entity: Entity) {
-        if (entity.get(SelectableComponent)) {
+    private onDragging(e: PIXI.InteractionEvent, entity?: Entity) {
+        if (entity && entity.get(SelectableComponent)) {
             if (!entity.get(SelectedComponent)) {
                 this.eventBusService.removeSelection.emit();
 
@@ -219,7 +229,7 @@ export class MouseSystem extends EntitySystem {
                     },
                 });
             }
-        } else if (entity.get(SpawnableComponent)) {
+        } else if (entity && entity.get(SpawnableComponent)) {
             this.eventBusService.showSelectionTool.emit({
                 state: 'progress',
                 position: {
@@ -233,8 +243,8 @@ export class MouseSystem extends EntitySystem {
         this.startDragCoords.y = e.data.global.y;
     }
 
-    private onDragEnd(e: PIXI.InteractionEvent, entity: Entity): void {
-        if (entity.get(SpawnableComponent)) {
+    private onDragEnd(e: PIXI.InteractionEvent, entity?: Entity): void {
+        if (!entity) {
             this.eventBusService.showSelectionTool.emit({
                 state: 'end',
                 position: {

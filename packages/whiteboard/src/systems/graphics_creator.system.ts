@@ -27,7 +27,8 @@ export class GraphicsCreatorSystem extends EntitySystem {
     }
 
     private addToScene(graphics: IGraphics<unknown>): void {
-        this.pixiService.getApplication().stage.addChild(graphics.visual);
+        this.pixiService.getViewportContainer().addChild(graphics.visual);
+        // this.pixiService.getApplication().stage.addChild(graphics.visual);
     }
 
     update(): void {}
