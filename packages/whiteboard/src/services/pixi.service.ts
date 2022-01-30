@@ -15,6 +15,7 @@ export class PixiService {
     private readonly themeService: ThemeService;
 
     private viewport!: Viewport;
+    private background!: PIXI.DisplayObject;
 
     constructor(themeService: ThemeService) {
         this.themeService = themeService;
@@ -42,14 +43,13 @@ export class PixiService {
                         e.data.global.x - dragTargetBegin.x,
                         e.data.global.y - dragTargetBegin.y,
                     );*/
-
-                    viewport.toLocal(
-                        e.data.global,
-                        undefined,
-                        dragTarget.position,
-                    );
-                    dragTarget.x -= dragTargetBegin.x;
-                    dragTarget.y -= dragTargetBegin.y;
+                    // viewport.toLocal(
+                    //     e.data.global,
+                    //     undefined,
+                    //     dragTarget.position,
+                    // );
+                    // dragTarget.x -= dragTargetBegin.x;
+                    // dragTarget.y -= dragTargetBegin.y;
                 }
             })
             .on('mouseup', () => {
@@ -57,7 +57,8 @@ export class PixiService {
                 dragTargetBegin = null;
             });
 
-        this.application.stage.addChild(background, viewport, foreground);
+        background.addChild(viewport, foreground);
+        this.application.stage.addChild(background);
     }
 
     private createBackground(): PIXI.Container {
@@ -79,13 +80,19 @@ export class PixiService {
 
         background.addChild(backgroundGraphics.visual);
 
+        this.background = background;
+
         return background;
+    }
+
+    public getBackground(): PIXI.DisplayObject {
+        return this.background;
     }
 
     private createViewport(): PIXI.Container {
         const viewport = new Viewport({
-            screenWidth: window.innerWidth,
-            screenHeight: window.innerHeight,
+            // screenWidth: window.innerWidth,
+            // screenHeight: window.innerHeight,
             // screenWidth: this.application.stage.width,
             // screenHeight: this.application.stage.height,
             worldWidth: window.innerWidth,
@@ -93,27 +100,34 @@ export class PixiService {
             // worldWidth: 10_000,
             // worldHeight: 10_000,
 
+            passiveWheel: false,
+
             interaction: this.application.renderer.plugins.interaction,
         });
 
         viewport
-            .drag()
-            .pinch()
-            .wheel()
-            .decelerate()
-            .clamp({
-                left: false,
-                right: false,
-                top: false,
-                bottom: false,
-                direction: 'all',
-                underflow: 'center',
-            })
+            .drag({})
+            .decelerate({})
+            .pinch({})
+            .wheel({})
+            // .clamp({
+            // left: false,
+            // right: false,
+            // top: false,
+            // bottom: false,
+            // direction: 'all',
+            // })
             .clampZoom({
                 minWidth: 1_000,
                 maxWidth: 10_000,
             });
 
+        const viewportBorder = viewport.addChild(new PIXI.Graphics());
+        viewportBorder
+            .lineStyle(10, 0xff0000)
+            .drawRect(0, 0, viewport.worldWidth, viewport.worldHeight);
+
+        viewport.fit();
         // viewport.moveCenter(5_000, 5_000);
 
         // const sprite = viewport.addChild(new PIXI.Sprite(PIXI.Texture.WHITE));

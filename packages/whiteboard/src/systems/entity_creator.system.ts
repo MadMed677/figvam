@@ -34,6 +34,8 @@ export class EntityCreatorSystem extends EntitySystem {
         const blueprint = options.blueprint;
 
         if (blueprint.name === 'sticker') {
+            console.log('sticker options.position: ', options.position);
+
             const sticker = new Entity();
             this.engine.entities.add(sticker);
 
@@ -54,13 +56,6 @@ export class EntityCreatorSystem extends EntitySystem {
             );
             sticker.add(new GraphicsComponent(graphics));
 
-            /**
-             * @todo I think it shouldn't be here. We have to process
-             *  all visual components in one place and when something was added
-             *  we have to add it into the stage
-             * I think I have to implement some sort of queue and process
-             *  all entered entities with graphics component
-             */
             this.eventBus.graphics.addToScene.emit(graphics);
         } else if (blueprint.name === 'selection') {
             const selection = new Entity();

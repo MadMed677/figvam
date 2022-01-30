@@ -3,7 +3,12 @@ import './App.css';
 
 import Keyboard from 'keyboardjs';
 
-import {Engine, FigvamApi, InteractionMode} from '@figvam/whiteboard';
+import {
+    Engine,
+    FigvamApi,
+    InteractionMode,
+    FigvamFactory,
+} from '@figvam/whiteboard';
 import * as PIXI from 'pixi.js';
 
 import {Footer} from './Footer';
@@ -14,12 +19,9 @@ import {
     InteractionTypes,
     SelectionSubType,
 } from '@figvam/whiteboard/types';
+import {log} from 'util';
 
-interface IApplicationProps {
-    engine: Engine;
-    graphics: PIXI.Application;
-    api: FigvamApi;
-}
+interface IApplicationProps {}
 
 interface IApplicationState {
     selectionItems: Array<SelectionItem>;
@@ -27,8 +29,20 @@ interface IApplicationState {
 }
 
 class App extends React.PureComponent<IApplicationProps, IApplicationState> {
+    private readonly engine: Engine;
+    private readonly graphics: PIXI.Application;
+    private readonly api: FigvamApi;
+
     constructor(props: IApplicationProps) {
         super(props);
+
+        console.warn('constructor has been called');
+
+        const figvamWhiteboard = new FigvamFactory().create();
+
+        this.engine = figvamWhiteboard.engine;
+        this.graphics = figvamWhiteboard.graphics;
+        this.api = figvamWhiteboard.api;
 
         this.state = {
             selectionItems: [
@@ -64,7 +78,7 @@ class App extends React.PureComponent<IApplicationProps, IApplicationState> {
     private setInteractionWhiteboardMode = (
         interactionMode: InteractionMode,
     ): void => {
-        this.props.api.interaction.setMode(interactionMode);
+        this.api.interaction.setMode(interactionMode);
     };
 
     private onSelectionItemClicked = (type: SelectionSubType): void => {
@@ -76,7 +90,7 @@ class App extends React.PureComponent<IApplicationProps, IApplicationState> {
                 };
             }
 
-            this.props.api.interaction.setMode({
+            this.api.interaction.setMode({
                 type: InteractionTypes.Selection,
                 subType: type,
             });
@@ -112,7 +126,7 @@ class App extends React.PureComponent<IApplicationProps, IApplicationState> {
                 };
             }
 
-            this.props.api.interaction.setMode({
+            this.api.interaction.setMode({
                 type: InteractionTypes.Creation,
                 subType: type,
             });
@@ -130,12 +144,25 @@ class App extends React.PureComponent<IApplicationProps, IApplicationState> {
     };
 
     componentDidMount() {
+        console.warn('did mount?');
+
+        // @ts-ignore
+        if (module.hot) {
+            console.log('its hot');
+            // @ts-ignore
+            module.hot.accept('@figvam/whiteboard', () => {
+                console.log(
+                    'something has been changed in: @figvam/whiteboard',
+                );
+            });
+        }
+
         import('whiteboard_engine').then(module => {
             console.log(module.greet());
         });
 
         this.initShortcuts();
-        this.props.graphics.ticker.add(this.tick);
+        this.graphics.ticker.add(this.tick);
 
         const canvasContainer = document.querySelector('#canvas_container')!;
 
@@ -144,21 +171,23 @@ class App extends React.PureComponent<IApplicationProps, IApplicationState> {
          *  otherwise we have to add it
          */
         if (!canvasContainer.hasChildNodes()) {
-            document
-                .querySelector('#canvas_container')!
-                .appendChild(this.props.graphics.view);
+            canvasContainer.appendChild(this.graphics.view);
         }
     }
 
     componentWillUnmount() {
+        console.warn('will unmount? ');
+
         /** Unbind all keyboard listeners */
         Keyboard.reset();
 
-        this.props.graphics.ticker.remove(this.tick);
+        this.graphics.ticker.remove(this.tick);
 
-        document
-            .querySelector('#canvas_container')!
-            .removeChild(this.props.graphics.view);
+        const canvasContainer = document.querySelector('#canvas_container')!;
+
+        while (canvasContainer.firstChild) {
+            canvasContainer.removeChild(canvasContainer.firstChild);
+        }
     }
 
     private initShortcuts = (): void => {
@@ -184,8 +213,8 @@ class App extends React.PureComponent<IApplicationProps, IApplicationState> {
     };
 
     private tick() {
-        this.props.engine.update(
-            Math.min(0.032, this.props.graphics.ticker.elapsedMS / 1000),
+        this.engine.update(
+            Math.min(0.032, this.graphics.ticker.elapsedMS / 1000),
         );
     }
 

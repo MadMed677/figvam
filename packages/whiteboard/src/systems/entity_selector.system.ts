@@ -13,7 +13,7 @@ import {SelectionToolGraphics} from '../graphics';
 @Service()
 export class EntitySelectorSystem extends EntitySystem {
     @Inject()
-    private readonly eventBusService!: EventBusService;
+    private readonly eventBus!: EventBusService;
 
     private readonly connections = new SignalConnections();
     private entities: Entity[] = [];
@@ -31,12 +31,10 @@ export class EntitySelectorSystem extends EntitySystem {
         );
 
         this.connections.add(
-            this.eventBusService.entities.select.connect(
-                this.selectEntity.bind(this),
-            ),
+            this.eventBus.entities.select.connect(this.selectEntity.bind(this)),
         );
         this.connections.add(
-            this.eventBusService.showSelectionTool.connect(
+            this.eventBus.showSelectionTool.connect(
                 this.showSelectionCreatorTool.bind(this),
             ),
         );
@@ -56,8 +54,8 @@ export class EntitySelectorSystem extends EntitySystem {
     private showSelectionCreatorTool(options: ISelectionTool): void {
         switch (options.state) {
             case 'start': {
-                this.eventBusService.removeSelection.emit();
-                this.eventBusService.entities.create.emit({
+                this.eventBus.removeSelection.emit();
+                this.eventBus.entities.create.emit({
                     blueprint: {
                         name: 'selection_tool',
                         data: {
@@ -93,7 +91,7 @@ export class EntitySelectorSystem extends EntitySystem {
 
             case 'end': {
                 // Removing SelectionCreationTool
-                this.eventBusService.entities.destroyByComponents.emit([
+                this.eventBus.entities.destroyByComponents.emit([
                     SelectionToolComponent,
                 ]);
             }

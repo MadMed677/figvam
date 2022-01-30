@@ -38,7 +38,7 @@ export class MouseSystem extends EntitySystem {
     private activeEntity: Entity | undefined;
 
     @Inject()
-    private readonly eventBusService!: EventBusService;
+    private readonly eventBus!: EventBusService;
 
     @Inject()
     private readonly figvamApi!: FigvamApi;
@@ -129,6 +129,19 @@ export class MouseSystem extends EntitySystem {
     }
 
     private onClickStart(e: PIXI.InteractionEvent, entity?: Entity) {
+        const position = e.target.getGlobalPosition();
+
+        console.log(
+            e.target.getGlobalPosition(),
+            {
+                // @ts-ignore
+                offsetX: e.data.originalEvent.offsetX,
+                // @ts-ignore
+                offsetY: e.data.originalEvent.offsetY,
+            },
+            e.data.global,
+            e.data.getLocalPosition(this.pixiService.getViewportContainer()),
+        );
         const interactionMode = this.figvamApi.interaction.getMode();
 
         /** @todo All interaction handling must be in a different handler */
@@ -140,7 +153,7 @@ export class MouseSystem extends EntitySystem {
         }
 
         /** Trigger an event to remove selection */
-        this.eventBusService.removeSelection.emit();
+        this.eventBus.removeSelection.emit();
 
         if (
             interactionMode.type === InteractionTypes.Creation &&
@@ -151,7 +164,7 @@ export class MouseSystem extends EntitySystem {
              * We definitely should create entity via Factory
              * As an example: https://lusito.github.io/typed-ecstasy/guide/data-driven/components.html
              */
-            this.eventBusService.entities.create.emit({
+            this.eventBus.entities.create.emit({
                 blueprint: {
                     name: 'sticker',
                     data: {
@@ -163,8 +176,10 @@ export class MouseSystem extends EntitySystem {
                     graphics: StickerGraphics,
                 },
                 position: {
-                    x: e.data.global.x,
-                    y: e.data.global.y,
+                    x: position.x,
+                    y: position.y,
+                    // x: e.data.global.x,
+                    // y: e.data.global.y,
                     // x:
                     //     e.data.global.x -
                     //     this.pixiService.getViewportContainer().worldWidth / 2,
@@ -179,7 +194,7 @@ export class MouseSystem extends EntitySystem {
 
         // We may select only Selectable entities
         if (entity && entity.has(SelectableComponent)) {
-            this.eventBusService.entities.select.emit(entity);
+            this.eventBus.entities.select.emit(entity);
 
             return;
         }
@@ -192,7 +207,7 @@ export class MouseSystem extends EntitySystem {
 
     private onDragStart(e: PIXI.InteractionEvent, entity?: Entity) {
         if (entity && entity.get(SpawnableComponent)) {
-            this.eventBusService.showSelectionTool.emit({
+            this.eventBus.showSelectionTool.emit({
                 state: 'start',
                 position: {
                     x: e.data.global.x,
@@ -208,10 +223,10 @@ export class MouseSystem extends EntitySystem {
     private onDragging(e: PIXI.InteractionEvent, entity?: Entity) {
         if (entity && entity.get(SelectableComponent)) {
             if (!entity.get(SelectedComponent)) {
-                this.eventBusService.removeSelection.emit();
+                this.eventBus.removeSelection.emit();
 
                 /** Trigger to move entities */
-                this.eventBusService.entities.move.emit([entity], {
+                this.eventBus.entities.move.emit([entity], {
                     position: {
                         dx: e.data.global.x - this.startDragCoords.x,
                         dy: e.data.global.y - this.startDragCoords.y,
@@ -222,7 +237,7 @@ export class MouseSystem extends EntitySystem {
                     Family.all(SelectedComponent).get(),
                 );
 
-                this.eventBusService.entities.move.emit(entities, {
+                this.eventBus.entities.move.emit(entities, {
                     position: {
                         dx: e.data.global.x - this.startDragCoords.x,
                         dy: e.data.global.y - this.startDragCoords.y,
@@ -230,7 +245,7 @@ export class MouseSystem extends EntitySystem {
                 });
             }
         } else if (entity && entity.get(SpawnableComponent)) {
-            this.eventBusService.showSelectionTool.emit({
+            this.eventBus.showSelectionTool.emit({
                 state: 'progress',
                 position: {
                     x: e.data.global.x,
@@ -245,7 +260,7 @@ export class MouseSystem extends EntitySystem {
 
     private onDragEnd(e: PIXI.InteractionEvent, entity?: Entity): void {
         if (!entity) {
-            this.eventBusService.showSelectionTool.emit({
+            this.eventBus.showSelectionTool.emit({
                 state: 'end',
                 position: {
                     x: e.data.global.x,
@@ -266,7 +281,7 @@ export class MouseSystem extends EntitySystem {
         this.interactionManager.cursorStyles.default = 'crosshair';
         this.interactionManager.setCursorMode('crosshair');
 
-        this.eventBusService.showSelectionTool.emit({
+        this.eventBus.showSelectionTool.emit({
             state: 'start',
             position: {
                 x: e.data.global.x,
@@ -278,7 +293,7 @@ export class MouseSystem extends EntitySystem {
     }
 
     private onLongClickProgress(e: PIXI.InteractionEvent): void {
-        this.eventBusService.showSelectionTool.emit({
+        this.eventBus.showSelectionTool.emit({
             state: 'progress',
             position: {
                 x: e.data.global.x,
@@ -293,7 +308,7 @@ export class MouseSystem extends EntitySystem {
         this.interactionManager.cursorStyles.default = 'inherit';
         this.interactionManager.setCursorMode('inherit');
 
-        this.eventBusService.showSelectionTool.emit({
+        this.eventBus.showSelectionTool.emit({
             state: 'end',
             position: {
                 x: e.data.global.x,
