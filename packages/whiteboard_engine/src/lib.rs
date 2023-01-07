@@ -1,8 +1,9 @@
 mod components;
 mod graphics;
-mod legion_engine;
+// mod legion_engine;
 mod systems;
 mod utils;
+mod bevy_engine;
 
 use wasm_bindgen::prelude::*;
 
@@ -44,11 +45,17 @@ struct FigvamFactory {
 
 #[wasm_bindgen]
 impl FigvamFactory {
-    pub fn create() -> legion_engine::FigvamEngineCreator {
-        let engine = legion_engine::FigvamEngine::get_builder()
-            .with_entity()
-            .with_entity()
-            .with_system()
+    // pub fn create() -> legion_engine::FigvamEngineCreator {
+    //     let engine = legion_engine::FigvamEngine::get_builder()
+    //         .with_entity()
+    //         .with_entity()
+    //         .with_system()
+    //         .build();
+    //
+    //     engine
+    // }
+    pub fn create() -> bevy_engine::FigvamEngineBuilder {
+        let engine = bevy_engine::FigvamEngine::get_builder()
             .build();
 
         engine
